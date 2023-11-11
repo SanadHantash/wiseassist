@@ -1,5 +1,5 @@
 const Dashboard = require('../Models/dashboardModel.js');
-var multer  = require('multer');
+const multer  = require('multer');
 const path = require('path');
 
 const admin = require('firebase-admin');
