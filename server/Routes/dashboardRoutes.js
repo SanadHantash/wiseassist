@@ -12,6 +12,8 @@ router.put('/dashboard/update/:id', dashboardController.updatecourse);
 router.put('/dashboard/delete/:id', dashboardController.deletecourse);
 router.put('/dashboard/deleteuser/:id', dashboardController.deleteuser);
 router.post('/dashboard/createlesson/:id', dashboardController.createlesson);
+router.get('/dashboard/alllessons/:id', dashboardController.alllessons);
+router.get('/dashboard/lesson/:id', dashboardController.lessonpage);
 
 
 module.exports = router;

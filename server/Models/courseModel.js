@@ -85,6 +85,24 @@ Course.allelderliescourses = async () => {
       throw err;
     }
   };
-  
+  Course.alllessons = async (courseID) => {
+    try {
+      const result = await db.query('SELECT lesson.id,lesson.title FROM lesson inner join courses on courses.id= lesson.course_id where courses.id=$1 and lesson.is_deleted = false;',[courseID]);
+     return  result.rows
+    } catch (err) {
+      throw err;
+    }
+  };
+
+  Course.lessonpage= async(lessonID)=>{
+    try {
+      const result = await db.query('SELECT lesson.id,lesson.title,lesson.video,lesson.description FROM lesson where lesson.id=$1 and lesson.is_deleted = false;',[lessonID]);
+      
+     return  result.rows
+    } catch (err) {
+      throw err;
+    }
+  };
+
   
 module.exports = Course;

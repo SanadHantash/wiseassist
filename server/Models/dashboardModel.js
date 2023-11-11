@@ -90,5 +90,22 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
       const result = await db.query('INSERT INTO lesson (course_id,video) VALUES ($1, $2) RETURNING *', [courseID,videoUrl]);
       return result.rows[0];
     };
+    Dashboard.alllessons = async (courseID) => {
+      try {
+        const result = await db.query('SELECT lesson.id,lesson.title FROM lesson inner join courses on courses.id= lesson.course_id where courses.id=$1 and lesson.is_deleted = false;',[courseID]);
+       return  result.rows
+      } catch (err) {
+        throw err;
+      }
+    };
 
+    Dashboard.lessonpage= async(lessonID)=>{
+      try {
+        const result = await db.query('SELECT lesson.id,lesson.title,lesson.video,lesson.description FROM lesson where lesson.id=$1 and lesson.is_deleted = false;',[lessonID]);
+        
+       return  result.rows
+      } catch (err) {
+        throw err;
+      }
+    };
 module.exports = Dashboard;

@@ -178,6 +178,35 @@ const uploadVideoToFirebase = async (videoBuffer) => {
   return videoUrl;
 };
 
+const alllessons = async (req, res, next) => {
+
+  try {
+    const courseID = req.params.id;
+    const course = await Dashboard.alllessons(courseID);
+
+  
+  
+    res.status(200).json(course); 
+  } 
+  catch (err) {
+      console.error(err);
+      res.status(400).json({ success: false, error: 'Error in getting lessons' });
+    }
+  };
+
+  const lessonpage = async (req, res) => {
+    const lessonID = req.params.id;
+    try {
+      const course = await Dashboard.lessonpage(lessonID);
+      res.status(200).json({ success: true, course });
+    } 
+    
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, error: 'Error in getting lesson' });
+    }
+  };
+
 module.exports = {
     createcourse,
     allcourses,
@@ -185,6 +214,8 @@ module.exports = {
     updatecourse,
     deletecourse,
     deleteuser,
-    createlesson
+    createlesson,
+    alllessons,
+    lessonpage
 
 }

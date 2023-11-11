@@ -1,6 +1,6 @@
 
 const Course = require('../Models/courseModel.js');
-//var multer  = require('multer');
+//const multer  = require('multer');
 const path = require('path');
 
 
@@ -57,9 +57,24 @@ const allelderliescourses = async (req, res, next) => {
     }
   };
   
+  const lessonpage = async (req, res) => {
+    const lessonID = req.params.id;
+    try {
+      const course = await Course.lessonpage(lessonID);
+      res.status(200).json({ success: true, course });
+    } 
+    
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, error: 'Error in getting lesson' });
+    }
+  };
+  
 module.exports = {
     allelderliescourses,
     onsiteelderliescourses,
     onlineelderliescourses,
-    coursedetail
+    coursedetail,
+    alllessons,
+    lessonpage
   };
