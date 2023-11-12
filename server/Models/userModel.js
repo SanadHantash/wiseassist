@@ -31,7 +31,7 @@ User.checkUserExistence = async (email, user_name, phonenumber) => {
         throw err;
     }
 }
-User.login = async(email,)=>{
+User.login = async(email)=>{
     try{
         const user = await db.query(`select * from users where email = $1;`,[email]);
        

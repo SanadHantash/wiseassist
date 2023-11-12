@@ -56,25 +56,25 @@ const register = async (req, res) => {
       }
   };
   
-const login = async (req, res) => {
-    const { email} = req.body;
+  const login = async (req, res) => {
+    const { email } = req.body;
 
     try {
         const user = await User.login(email);
         if (!user) {
             return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
-    
-        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, {expiresIn: '4h'});
+
+        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '4h' });
         res.cookie('token', token, { httpOnly: true });
-        res.status(200).json(token);
-    
-        res.status(200).json({ success: true, message: 'Successfully signed in', user, token });
+        res.status(200).json({ success: true, message: 'Successfully signed in', token });
     } catch (err) {
         console.error(err);
         res.status(500).json({ success: false, message: 'Internal server error' });
     }
 };
+
+
 module.exports = {
     register,
     login,

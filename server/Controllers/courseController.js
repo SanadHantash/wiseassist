@@ -43,11 +43,37 @@ const allelderliescourses = async (req, res, next) => {
     }
   };
 
+  
+  const  onsiteworkshops = async (req, res, next) => {
 
-  const coursedetail = async (req, res) => {
+    try {
+      const courses = await  Course.onsiteworkshops();
+      res.status(200).json({ success: true, courses });
+    } 
+    
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, error: 'Error in getting courses' });
+    }
+  };
+
+  const  onlineworkshops = async (req, res, next) => {
+
+    try {
+      const courses = await  Course.onlineworkshops();
+      res.status(200).json({ success: true, courses });
+    } 
+    
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, error: 'Error in getting courses' });
+    }
+  };
+
+  const detail = async (req, res) => {
     const courseId = req.params.id;
     try {
-      const course = await Course.coursedetail(courseId);
+      const course = await Course.detail(courseId);
       res.status(200).json({ success: true, course });
     } 
     
@@ -56,25 +82,43 @@ const allelderliescourses = async (req, res, next) => {
       res.status(500).json({ success: false, error: 'Error in getting course' });
     }
   };
-  
-  const lessonpage = async (req, res) => {
-    const lessonID = req.params.id;
+
+  const alllessons = async (req, res, next) => {
+
     try {
-      const course = await Course.lessonpage(lessonID);
-      res.status(200).json({ success: true, course });
-    } 
+      const courseID = req.params.id;
+      const course = await Course.alllessons(courseID);
+  
     
+    
+      res.status(200).json(course); 
+    } 
     catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, error: 'Error in getting lesson' });
-    }
-  };
+        console.error(err);
+        res.status(400).json({ success: false, error: 'Error in getting lessons' });
+      }
+    };
+  
+    const lessonpage = async (req, res) => {
+      const lessonID = req.params.id;
+      try {
+        const course = await Course.lessonpage(lessonID);
+        res.status(200).json({ success: true, course });
+      } 
+      
+      catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Error in getting lesson' });
+      }
+    };
   
 module.exports = {
     allelderliescourses,
     onsiteelderliescourses,
     onlineelderliescourses,
-    coursedetail,
+    detail,
     alllessons,
-    lessonpage
+    lessonpage,
+    onsiteworkshops,
+    onlineworkshops
   };

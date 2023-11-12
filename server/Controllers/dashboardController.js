@@ -2,13 +2,8 @@ const Dashboard = require('../Models/dashboardModel.js');
 const multer  = require('multer');
 const path = require('path');
 
-const admin = require('firebase-admin');
-const serviceAccount = require('../privatekey.json'); 
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  storageBucket: 'wiseassist-b8a8a.appspot.com', 
-});
+const { admin } = require('../firebase');
 
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage }).single('image');
@@ -21,7 +16,7 @@ const createcourse = async (req, res) => {
         return res.status(400).json({ success: false, error: err.message });
       }
 
-      const { title, detail, description, trainer, course_time, category_id, is_paid, audince_id, site } = req.body;
+      const { title, detail, description, trainer, course_time, category_id, audince_id, site } = req.body;
       const imageBuffer = req.file ? req.file.buffer : null;
 
       const imageUrl = await uploadImageToFirebase(imageBuffer);
@@ -34,7 +29,6 @@ const createcourse = async (req, res) => {
         course_time,
         category_id,
         imageUrl,
-        is_paid,
         audince_id,
         site
       );
@@ -136,11 +130,6 @@ const deleteuser = async (req, res) => {
   }
 };
 
-
-
-
-
-
 const createlesson = async (req, res) => {
   try {
     videoupload(req, res, async function (err) {
@@ -149,10 +138,11 @@ const createlesson = async (req, res) => {
       }
 
       const courseID = req.params.id;
+      const {title,description} = req.body;
       const videoBuffer = req.file ? req.file.buffer : null;
 
       const videoUrl = await uploadVideoToFirebase(videoBuffer);
-      const result = await Dashboard.createlesson(courseID,videoUrl);
+      const result = await Dashboard.createlesson(courseID,videoUrl,title,description);
 
       if (result) {
         return res.status(201).json({ success: true, message: 'Lesson added successfully', data: result });
@@ -177,6 +167,7 @@ const uploadVideoToFirebase = async (videoBuffer) => {
   const videoUrl = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
   return videoUrl;
 };
+
 
 const alllessons = async (req, res, next) => {
 
@@ -207,6 +198,8 @@ const alllessons = async (req, res, next) => {
     }
   };
 
+  
+  
 module.exports = {
     createcourse,
     allcourses,
@@ -217,5 +210,4 @@ module.exports = {
     createlesson,
     alllessons,
     lessonpage
-
 }
