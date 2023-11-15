@@ -1,5 +1,5 @@
 const db = require('../config');
-
+const jwt = require('jsonwebtoken');
 const User = {};
 
 User.checkUserExistence = async (email, user_name, phonenumber) => {
@@ -45,4 +45,23 @@ User.login = async(email)=>{
     }
 };
 
+
+User.checkconfirm = async (userID) => {
+    try {
+        const result = await db.query('UPDATE users SET role_id = 1 WHERE id = $1 RETURNING *', [userID]);
+        return result[0]; 
+      } catch (err) {
+        throw err;
+      }
+};
+
+
+User.findbyid = async (userID) => {
+    try {
+      const result = await db.query('SELECT * FROM users WHERE id = $1', [userID]);
+      return result[0]; 
+    } catch (err) {
+      throw err;
+    }
+  };
 module.exports = User;
