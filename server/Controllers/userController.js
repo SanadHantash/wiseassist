@@ -58,21 +58,22 @@ const register = async (req, res) => {
   
   const login = async (req, res) => {
     const { email } = req.body;
-
+  
     try {
-        const user = await User.login(email);
-        if (!user) {
-            return res.status(401).json({ success: false, message: 'Invalid email or password' });
-        }
-        console.log(user.id)
-        const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '4h' });
-        res.cookie('token', token, { httpOnly: true });
-        res.status(200).json({ success: true, message: 'Successfully signed in', token });
+      const user = await User.login(email);
+      if (!user || user.is_deleted) {
+        return res.status(401).json({ success: false, message: 'Invalid email or password' });
+      }
+  
+      console.log(user.id);
+      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '4h' });
+      res.cookie('token', token, { httpOnly: true });
+      res.status(200).json({ success: true, message: 'Successfully signed in', token });
     } catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Internal server error' });
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
     }
-};
+  };
 
 
 const createCheckoutSession = async (req, res) => {
@@ -91,10 +92,10 @@ const createCheckoutSession = async (req, res) => {
       },
     };
 
-    // Create a customer directly in Stripe
+  
     const customer = await stripe.customers.create({
-      email: req.user.email, // Assuming user email is available in req.user
-      name: req.user.user_name, // Assuming user name is available in req.user
+      email: req.user.email, 
+      name: req.user.user_name, 
       metadata: {
         userId: userID,
       },
@@ -119,18 +120,7 @@ const createCheckoutSession = async (req, res) => {
   }
 };
 
-const updaterole = async (req, res) => {
-  try {
-      const userID = req.user.userId;
-      const updateResult = 
-      console.log('Update Result:', updateResult);
-      await User.checkconfirm(userID);
-      res.json("User updated");
-  } catch (error) {
-      console.error('Error updating user role:', error);
-      res.status(500).json({ success: false, error: 'Failed to update user role' });
-  }
-};
+
 
 
 module.exports = {
@@ -138,6 +128,6 @@ module.exports = {
     login,
     cont,
     createCheckoutSession,
-    updaterole
+    
 };
 
