@@ -31,20 +31,19 @@ User.checkUserExistence = async (email, user_name, phonenumber) => {
         throw err;
     }
 }
-User.login = async(email)=>{
-    try{
-        const user = await db.query(`select * from users where email = $1;`,[email]);
-       
-        if ( user.rows[0] != null){
-            return user.rows[0];
-        } else {
-            return "email is not found";
-        }
-    } catch(error){
-        return error;
-    }
-};
 
+User.login = async (email) => {
+    try {
+      const user = await db.query('SELECT id, email, is_deleted FROM users WHERE email = $1;', [email]);
+      if (user.rows[0]) {
+        return user.rows[0];
+      } else {
+        return "Email not found or user is deleted.";
+      }
+    } catch (error) {
+      throw error;
+    }
+  };
 
 User.checkconfirm = async (userID) => {
     try {
