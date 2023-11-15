@@ -83,13 +83,28 @@ const allelderliescourses = async (req, res, next) => {
     }
   };
 
-  const alllessons = async (req, res, next) => {
+  const alllessonsfree = async (req, res, next) => {
 
     try {
       const courseID = req.params.id;
-      const course = await Course.alllessons(courseID);
+      const userID = req.user.userid;
+      const course = await Course.alllessonsfree(userID,courseID);
   
     
+      res.status(200).json(course); 
+    } 
+    catch (err) {
+        console.error(err);
+        res.status(400).json({ success: false, error: 'Error in getting lessons' });
+      }
+    };
+  const alllessonspaid = async (req, res, next) => {
+
+    try {
+      const courseID = req.params.id;
+      const userID = req.user.userId;
+      const course = await Course.alllessonspaid(userID,courseID);
+  
     
       res.status(200).json(course); 
     } 
@@ -101,8 +116,9 @@ const allelderliescourses = async (req, res, next) => {
   
     const lessonpage = async (req, res) => {
       const lessonID = req.params.id;
+      const userID = req.user.userid;
       try {
-        const course = await Course.lessonpage(lessonID);
+        const course = await Course.alllessonspaid(lessonID);
         res.status(200).json({ success: true, course });
       } 
       
@@ -117,7 +133,8 @@ module.exports = {
     onsiteelderliescourses,
     onlineelderliescourses,
     detail,
-    alllessons,
+    alllessonsfree,
+    alllessonspaid,
     lessonpage,
     onsiteworkshops,
     onlineworkshops
