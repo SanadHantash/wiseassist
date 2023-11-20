@@ -28,8 +28,9 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
           courses.is_deleted = false;
       `);
     
-        const formattedResult = await Promise.all(
-          queryResult.rows.map(async (row) => {
+      const formattedResult = await Promise.all(
+        queryResult.rows.map(async (row) => {
+          if (row.course_time !== null) {
             row.course_time = row.course_time.toLocaleDateString('en-US', {
               weekday: 'long',
               year: 'numeric',
@@ -37,15 +38,15 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
               day: 'numeric',
               hour: 'numeric',
             });
-    
-  
-            const imageRef = storage.bucket().file('images/' + row.image);
-            const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
-            row.image = url;
-    
-            return row;
-          })
-        );
+          }
+      
+          const imageRef = storage.bucket().file('images/' + row.image);
+          const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
+          row.image = url;
+      
+          return row;
+        })
+      );
     
         return formattedResult;
       } catch (err) {
@@ -59,7 +60,7 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
         SELECT 
           courses.id,
           courses.title,
-          courses.description,
+          courses.detail,
           courses.trainer,
           REPLACE(courses.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image,
           categories.category,
@@ -122,14 +123,12 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
 
       Dashboard.deleteuser = async (userID) => {
         try {
-        
-          const result = await db.query('UPDATE users SET is_deleted = TRUE  WHERE id = $1', [userID]);
+          const result = await db.query('UPDATE users SET is_deleted = NOT is_deleted WHERE users.id = $1', [userID]);
           return result.rows;
         } catch (err) {
           throw err;
         }
       };
-      
       
 
     Dashboard.createlesson = async (courseID,videoUrl,title,description) => {
@@ -175,5 +174,91 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
       }
     };
   
+
+    Dashboard.createtichtip = async ( title,short_detail, detail, imageUrl) => {
+      const result = await db.query('INSERT INTO techtips (title,short_detail,detail,image)  VALUES ($1, $2, $3,$4)', [title,short_detail, detail, imageUrl]);
+        return result.rows;
+    };
+
+    Dashboard.alltechtips = async () => {
+      try {
+        const queryResult = await db.query(`
+        SELECT 
+  techtips.id,
+  techtips.title,
+  techtips.short_detail,
+  REPLACE(techtips.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image
+FROM 
+  techtips
+WHERE 
+  techtips.is_deleted = false;
+      `);
+    
+      const formattedResult = await Promise.all(
+        queryResult.rows.map(async (row) => {
+      
+          const imageRef = storage.bucket().file('images/' + row.image);
+          const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
+          row.image = url;
+      
+          return row;
+        })
+      );
+    
+        return formattedResult;
+      } catch (err) {
+        throw new Error(`Error retrieving courses: ${err.message}`);
+      }
+    };
+
+    Dashboard.techtipdetail = async (techId) => {
+      try {
+        const queryResult = await db.query(`
+        SELECT 
+            techtips.id,
+            techtips.title,
+            techtips.detail,
+            REPLACE(techtips.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image
+        FROM 
+            techtips
+        WHERE 
+            techtips.id = $1 and techtips.is_deleted = false;
+    `, [techId]);
+          
+        const formattedResult = await Promise.all(
+          queryResult.rows.map(async (row) => {
+
+            const imageRef = storage.bucket().file('images/' + row.image);
+            const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
+            row.image = url;
+    
+            return row;
+          })
+        );
+        return formattedResult;
+      } catch (err) {
+        throw err;
+      }
+    };
+
+    Dashboard.updatetechtip = async (techId,title, short_detail,detail) => {
+      try {
+        const result = await db.query('UPDATE techtips SET title=$2, short_detail=$3, detail=$4 WHERE id=$1', [techId,title, short_detail,detail]);
+
+        return result.rows;
+      } catch (err) {
+        throw err;
+      }
+    };
+    
+    Dashboard.deletetechtip = async (courseID) => {
+      try {
+      
+        const result = await db.query('UPDATE techtips SET is_deleted = TRUE  WHERE id = $1', [courseID]);
+        return result.rows;
+      } catch (err) {
+        throw err;
+      }
+    };
     
 module.exports = Dashboard;

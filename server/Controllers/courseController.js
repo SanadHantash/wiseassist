@@ -17,6 +17,18 @@ const allelderliescourses = async (req, res, next) => {
       res.status(500).json({ success: false, error: 'Error in getting courses' });
     }
   };
+const allelderliesworkshops = async (req, res, next) => {
+
+    try {
+      const courses = await Course.allelderliesworkshops();
+      res.status(200).json({ success: true, courses });
+    } 
+    
+    catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, error: 'Error in getting workshops' });
+    }
+  };
 
   const onsiteelderliescourses = async (req, res, next) => {
 
@@ -128,6 +140,7 @@ const allelderliescourses = async (req, res, next) => {
       }
     };
   
+
 module.exports = {
     allelderliescourses,
     onsiteelderliescourses,
@@ -136,6 +149,7 @@ module.exports = {
     alllessonsfree,
     alllessonspaid,
     lessonpage,
+    allelderliesworkshops,
     onsiteworkshops,
     onlineworkshops
   };

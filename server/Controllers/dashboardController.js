@@ -198,8 +198,86 @@ const alllessons = async (req, res, next) => {
     }
   };
 
+  const createtichtip = async (req,res,next) => {
+    try {
+      upload(req, res, async function (err) {
+        if (err) {
+          return res.status(400).json({ success: false, error: err.message });
+        }
   
+        const { title, short_detail,detail} = req.body;
+        const imageBuffer = req.file ? req.file.buffer : null;
   
+        const imageUrl = await uploadImageToFirebase(imageBuffer);
+  
+        await Dashboard.createtichtip(
+          title,
+          short_detail,
+          detail,
+          imageUrl,
+        );
+  
+        res.status(201).json({ success: true, message: 'Techtip added successfully' });
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(400).json({ success: false, error: 'Tichtip added failed' });
+    }
+  }
+  
+  const alltechtips = async (req, res, next) => {
+
+    try {
+      const course = await Dashboard.alltechtips();
+  
+    
+    
+      res.status(200).json(course); 
+    } 
+    catch (err) {
+        console.error(err);
+        res.status(400).json({ success: false, error: 'Error in getting tichtips' });
+      }
+    };
+  
+    const techtipdetail = async (req, res) => {
+      const techId = req.params.id;
+      try {
+        const course = await Dashboard.techtipdetail(techId);
+        res.status(200).json({ success: true, course });
+      } 
+      
+      catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Error in getting techtip' });
+      }
+    };
+
+    const updatetechtip = async(req,res) => {
+ 
+      try{
+       
+        const {title, short_detail,detail} = req.body;
+        const techId = req.params.id;
+        await Dashboard.updatetechtip(techId,title, short_detail,detail);
+        res.status(200).json({success:true,message:"Techtip updated successfully"});
+    
+      }catch{
+              res.status(500).json({ success: false, error: 'Error updating Techtip' });
+      }
+    }
+
+    const deletetechtip = async(req,res,next) =>{
+      try{
+        const techId = req.params.id;
+        await Dashboard.deletetechtip(techId);
+        res.status(200).json({ success: true, message: 'Techtip deleted successfully' });
+      } catch(err){
+        console.error(err);
+        res.status(400).json({ success: false, error: 'Techtip deleted failed' });
+      }
+    }
+
 module.exports = {
     createcourse,
     allcourses,
@@ -209,5 +287,10 @@ module.exports = {
     deleteuser,
     createlesson,
     alllessons,
-    lessonpage
+    lessonpage,
+    createtichtip,
+    alltechtips,
+    techtipdetail,
+    updatetechtip,
+    deletetechtip
 }

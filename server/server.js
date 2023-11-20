@@ -13,6 +13,8 @@ const cookieParser = require('cookie-parser');
 const userRouter = require('./Routes/userRoutes');
 const dashboardRouter = require('./Routes/dashboardRoutes');
 const googleRoute = require("./Routes/googleRoute");
+const userprofileRoute = require("./Routes/userprofileRoute");
+const techtipRoute = require("./Routes/techtipRoute");
 app.use(session({ secret: "cats", resave: true, saveUninitialized: true }));
 
 
@@ -28,6 +30,8 @@ app.use(googleRoute);
 app.use(userRouter);
 app.use(courseRouter);
 app.use(dashboardRouter);
+app.use(userprofileRoute);
+app.use(techtipRoute);
 
 
 
