@@ -261,4 +261,32 @@ WHERE
       }
     };
     
+    Dashboard.allquestions = async () => {
+      try {
+        const result = await db.query('SELECT faq.id,faq.question,users.user_name from faq  inner join  users on users.id = faq.user_id where faq.is_deletedq = false;');
+       return  result.rows
+      } catch (err) {
+        throw err;
+      }
+    };
+
+    Dashboard.addanswer = async (questionID,answer) => {
+      const result = await db.query('update faq set answer=$2 where faq.id = $1 Returning *', [questionID,answer]);
+      return result.rows[0];
+    };
+    Dashboard.updateanswer = async (answerID,answer) => {
+      const result = await db.query('update faq set answer=$2 where faq.id = $1 Returning *', [answerID,answer]);
+      return result.rows[0];
+    };
+
+    Dashboard.deleteanswer = async (answerID) =>{
+      try {
+      
+        const result = await db.query('UPDATE faq SET is_deleteda = TRUE  WHERE id = $1', [answerID]);
+        return result.rows;
+      } catch (err) {
+        throw err;
+      }
+    }
+    
 module.exports = Dashboard;

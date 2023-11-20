@@ -225,6 +225,7 @@ const alllessons = async (req, res, next) => {
     }
   }
   
+
   const alltechtips = async (req, res, next) => {
 
     try {
@@ -240,6 +241,7 @@ const alllessons = async (req, res, next) => {
       }
     };
   
+
     const techtipdetail = async (req, res) => {
       const techId = req.params.id;
       try {
@@ -254,9 +256,8 @@ const alllessons = async (req, res, next) => {
     };
 
     const updatetechtip = async(req,res) => {
- 
+
       try{
-       
         const {title, short_detail,detail} = req.body;
         const techId = req.params.id;
         await Dashboard.updatetechtip(techId,title, short_detail,detail);
@@ -278,6 +279,76 @@ const alllessons = async (req, res, next) => {
       }
     }
 
+    const allquestions = async(req,res,next)=>{
+      try{
+        const question = await Dashboard.allquestions();
+
+  
+  
+        res.status(200).json(question); 
+      }
+      catch (err) {
+        console.error(err);
+        res.status(400).json({ success: false, error: 'Error in getting questions' });
+      }
+    }
+
+    const addanswer = async (req, res) => {
+      try {
+        
+    
+          const questionID = req.params.id;
+          const {answer} = req.body;
+
+    
+          const result = await Dashboard.addanswer(questionID,answer);
+    
+          if (result) {
+            return res.status(201).json({ success: true, message: 'answer added successfully', data: result });
+          } else {
+            return res.status(400).json({ success: false, error: 'Failed to add answer' });
+          }
+        
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+      }
+    };
+
+    const updateanswer = async (req, res) => {
+      try {
+        
+    
+          const answerID = req.params.id;
+          const {answer} = req.body;
+
+    
+          const result = await Dashboard.addanswer(answerID,answer);
+    
+          if (result) {
+            return res.status(201).json({ success: true, message: 'answer added successfully', data: result });
+          } else {
+            return res.status(400).json({ success: false, error: 'Failed to add answer' });
+          }
+        
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, error: 'Internal Server Error' });
+      }
+    };
+
+    const deleteanswer = async(req,res,next) =>{
+      try{
+        const answerID = req.params.id;
+        await Dashboard.deleteanswer(answerID);
+        res.status(200).json({ success: true, message: 'Answer deleted successfully' });
+      } catch(err){
+        console.error(err);
+        res.status(400).json({ success: false, error: 'Answer deleted failed' });
+      }
+    }
+
+
 module.exports = {
     createcourse,
     allcourses,
@@ -292,5 +363,9 @@ module.exports = {
     alltechtips,
     techtipdetail,
     updatetechtip,
-    deletetechtip
+    deletetechtip,
+    allquestions,
+    addanswer,
+    updateanswer,
+    deleteanswer
 }

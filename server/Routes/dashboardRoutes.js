@@ -19,6 +19,10 @@ router.put('/dashboard/deleteuser/:id', dashboardController.deleteuser);
 router.post('/dashboard/createlesson/:id', dashboardController.createlesson);
 router.get('/dashboard/alllessons/:id', dashboardController.alllessons);
 router.get('/dashboard/lesson/:id', dashboardController.lessonpage);
+router.get('/dashboard/allqeustions', dashboardController.allquestions);
+router.put('/dashboard/question/:id/addanswer', dashboardController.addanswer);
+router.put('/dashboard/answer/:id/update', dashboardController.updateanswer);
+router.put('/dashboard/answer/:id/delete', dashboardController.deleteanswer);
 
 
 module.exports = router;
