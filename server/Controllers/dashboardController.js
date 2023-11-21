@@ -1,7 +1,8 @@
 const Dashboard = require('../Models/dashboardModel.js');
 const multer  = require('multer');
 const path = require('path');
-
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const { admin } = require('../firebase');
 
@@ -11,6 +12,13 @@ const videoupload = multer({ storage: storage }).single('video');
 
 const createcourse = async (req, res) => {
   try {
+    const {  role } = req.user;
+
+   
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    }
+    
     upload(req, res, async function (err) {
       if (err) {
         return res.status(400).json({ success: false, error: err.message });
@@ -64,6 +72,14 @@ const uploadImageToFirebase = async (imageBuffer) => {
 const allcourses = async (req, res, next) => {
 
   try {
+
+    const { userId, role } = req.user;
+
+   
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    }
+    
     const course = await Dashboard.allcourses();
 
   
@@ -77,6 +93,13 @@ const allcourses = async (req, res, next) => {
   };
 
   const coursedetail = async (req, res) => {
+    const {  role } = req.user;
+
+   
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    }
+    
     const courseId = req.params.id;
     try {
       const course = await Dashboard.coursedetail(courseId);
@@ -92,7 +115,13 @@ const allcourses = async (req, res, next) => {
 const updatecourse = async(req,res) => {
  
   try{
+    const {  role } = req.user;
+
    
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    }
+    
     const {title,detail,description,trainer,course_time,category_id,site } = req.body;
     const courseID = req.params.id;
     await Dashboard.updatecourse(courseID, title,detail,description,trainer,course_time,category_id,site);
@@ -105,6 +134,13 @@ const updatecourse = async(req,res) => {
 
 const deletecourse = async(req,res,next) =>{
   try{
+    const {  role } = req.user;
+
+   
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    }
+    
     const courseID = req.params.id;
     await Dashboard.deletecourse(courseID);
     res.status(200).json({ success: true, message: 'Course deleted successfully' });
@@ -116,12 +152,19 @@ const deletecourse = async(req,res,next) =>{
 
 const deleteuser = async (req, res) => {
   try {
+    const {role } = req.user;
+
+   
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    }
+    
     const userID = req.params.id; 
    
 
 
 
-    const result = await Dashboard.deleteuser(userID);
+    await Dashboard.deleteuser(userID);
 
     res.status(200).json("user deleted successfully");
   } catch (error) {
@@ -132,6 +175,13 @@ const deleteuser = async (req, res) => {
 
 const createlesson = async (req, res) => {
   try {
+    const {  role } = req.user;
+
+   
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    }
+    
     videoupload(req, res, async function (err) {
       if (err) {
         return res.status(400).json({ success: false, error: err.message });
@@ -172,6 +222,13 @@ const uploadVideoToFirebase = async (videoBuffer) => {
 const alllessons = async (req, res, next) => {
 
   try {
+    const { role } = req.user;
+
+   
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    }
+    
     const courseID = req.params.id;
     const course = await Dashboard.alllessons(courseID);
 
@@ -186,8 +243,16 @@ const alllessons = async (req, res, next) => {
   };
 
   const lessonpage = async (req, res) => {
+    const {role } = req.user;
+
+   
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    }
     const lessonID = req.params.id;
     try {
+   
+    
       const course = await Dashboard.lessonpage(lessonID);
       res.status(200).json({ success: true, course });
     } 
@@ -200,6 +265,12 @@ const alllessons = async (req, res, next) => {
 
   const createtichtip = async (req,res,next) => {
     try {
+      const {role } = req.user;
+
+   
+      if (role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+      }
       upload(req, res, async function (err) {
         if (err) {
           return res.status(400).json({ success: false, error: err.message });
@@ -229,6 +300,12 @@ const alllessons = async (req, res, next) => {
   const alltechtips = async (req, res, next) => {
 
     try {
+      const {role } = req.user;
+
+   
+      if (role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+      }
       const course = await Dashboard.alltechtips();
   
     
@@ -243,6 +320,12 @@ const alllessons = async (req, res, next) => {
   
 
     const techtipdetail = async (req, res) => {
+      const {role } = req.user;
+
+   
+      if (role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+      }
       const techId = req.params.id;
       try {
         const course = await Dashboard.techtipdetail(techId);
@@ -258,6 +341,12 @@ const alllessons = async (req, res, next) => {
     const updatetechtip = async(req,res) => {
 
       try{
+        const {role } = req.user;
+
+   
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        }
         const {title, short_detail,detail} = req.body;
         const techId = req.params.id;
         await Dashboard.updatetechtip(techId,title, short_detail,detail);
@@ -270,6 +359,12 @@ const alllessons = async (req, res, next) => {
 
     const deletetechtip = async(req,res,next) =>{
       try{
+        const {role } = req.user;
+
+   
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        }
         const techId = req.params.id;
         await Dashboard.deletetechtip(techId);
         res.status(200).json({ success: true, message: 'Techtip deleted successfully' });
@@ -281,6 +376,12 @@ const alllessons = async (req, res, next) => {
 
     const allquestions = async(req,res,next)=>{
       try{
+        const {role } = req.user;
+
+   
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        }
         const question = await Dashboard.allquestions();
 
   
@@ -295,7 +396,12 @@ const alllessons = async (req, res, next) => {
 
     const addanswer = async (req, res) => {
       try {
-        
+        const {role } = req.user;
+
+   
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        }
     
           const questionID = req.params.id;
           const {answer} = req.body;
@@ -318,7 +424,12 @@ const alllessons = async (req, res, next) => {
     const updateanswer = async (req, res) => {
       try {
         
-    
+        const {role } = req.user;
+
+   
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        }
           const answerID = req.params.id;
           const {answer} = req.body;
 
@@ -337,8 +448,14 @@ const alllessons = async (req, res, next) => {
       }
     };
 
-    const deleteanswer = async(req,res,next) =>{
+    const deleteanswer = async(req,res) =>{
       try{
+        const {role } = req.user;
+
+   
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        }
         const answerID = req.params.id;
         await Dashboard.deleteanswer(answerID);
         res.status(200).json({ success: true, message: 'Answer deleted successfully' });
@@ -348,6 +465,52 @@ const alllessons = async (req, res, next) => {
       }
     }
 
+    const acceptcomment = async(req,res) =>{
+      
+      try {
+        const {role } = req.user;
+
+   
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        }
+        const techID = req.params.id;
+        await Dashboard.acceptcomment(techID);
+        res.status(200).json({ success: true ,message:'comment accepted successfully'});
+      } 
+      
+      catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false ,error:'error accept comment'});
+      }
+    };
+
+    const login = async (req, res) => {
+      const { email } = req.body;
+    
+      try {
+        const user = await Dashboard.login(email);
+    
+        if (!user || typeof user === 'string') {
+          return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
+    
+        const { id, role } = user;
+    
+        if (role !== 'admin') {
+          
+          return res.status(401).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        }
+    
+        const token = jwt.sign({ userId: id, email, role }, process.env.SECRET_KEY, { expiresIn: '4h' });
+        res.cookie('token', token, { httpOnly: true });
+        res.status(200).json({ success: true, message: 'Successfully signed in', token });
+      } catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+      }
+    };
+    
 
 module.exports = {
     createcourse,
@@ -367,5 +530,7 @@ module.exports = {
     allquestions,
     addanswer,
     updateanswer,
-    deleteanswer
+    deleteanswer,
+    acceptcomment,
+    login
 }

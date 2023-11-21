@@ -1,5 +1,5 @@
 const db = require('../config');
-
+const jwt = require('jsonwebtoken');
 const { admin, storage } = require('../firebase');
 const Dashboard = {};
 
@@ -144,6 +144,8 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
       const result = await db.query('INSERT INTO lesson (course_id,video,title,description) VALUES ($1, $2,$3,$4) RETURNING *', [courseID,videoUrl,title,description]);
       return result.rows[0];
     };
+
+
     Dashboard.alllessons = async (courseID) => {
       try {
         const result = await db.query('SELECT lesson.id,lesson.title FROM lesson inner join courses on courses.id= lesson.course_id where courses.id=$1 and lesson.is_deleted = false;',[courseID]);
@@ -283,19 +285,45 @@ WHERE
       const result = await db.query('update faq set answer=$2 where faq.id = $1 Returning *', [questionID,answer]);
       return result.rows[0];
     };
+
+
     Dashboard.updateanswer = async (answerID,answer) => {
       const result = await db.query('update faq set answer=$2 where faq.id = $1 Returning *', [answerID,answer]);
       return result.rows[0];
     };
 
+
     Dashboard.deleteanswer = async (answerID) =>{
       try {
-      
         const result = await db.query('UPDATE faq SET is_deleteda = TRUE  WHERE id = $1', [answerID]);
         return result.rows;
       } catch (err) {
         throw err;
       }
     }
+    
+
+    Dashboard.acceptcomment = async (techID) => {
+      try {
+        const result = await db.query('UPDATE techtip_comment SET is_available = TRUE  WHERE techtip_comment.id = $1 RETURNING * ', [techID]);
+        return result.rows;
+      } catch (err) {
+        throw err;
+      }
+    }
+
+
+    Dashboard.login = async (email) => {
+      try {
+        const user = await db.query('SELECT users.id, email, roles.role  FROM users inner join roles on roles.id = users.role_id WHERE email = $1 And users.is_deleted= false;', [email]);
+        if (user.rows[0]) {
+          return user.rows[0];
+        } else {
+          return "Email not found or user is denied to access.";
+        }
+      } catch (error) {
+        throw error;
+      }
+    };
     
 module.exports = Dashboard;
