@@ -19,7 +19,8 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
           courses.trainer,
           REPLACE(courses.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image,
           categories.category,
-          courses.course_time,
+          courses.start_time,
+          courses.end_time,
           courses.site
         FROM 
           courses
@@ -30,16 +31,24 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
     
       const formattedResult = await Promise.all(
         queryResult.rows.map(async (row) => {
-          if (row.course_time !== null) {
-            row.course_time = row.course_time.toLocaleDateString('en-US', {
+          if (row.start_time !== null) {
+            row.start_time = row.start_time.toLocaleDateString('en-US', {
               weekday: 'long',
               year: 'numeric',
               month: 'long',
               day: 'numeric',
               hour: 'numeric',
             });
+            if (row.end_time !== null) {
+              row.end_time = row.end_time.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+              });
+            }
           }
-      
           const imageRef = storage.bucket().file('images/' + row.image);
           const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
           row.image = url;
