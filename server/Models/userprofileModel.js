@@ -92,4 +92,80 @@ Profile.reginpaidcourse = async (userID, courseID) => {
 };
 
 
+Profile.addlesson = async (userID, lessonID) => {
+    try {
+       
+        const isfound = 'SELECT * FROM lesson WHERE id = $1 AND is_deleted = false';
+        const isfoundResult = await db.query(isfound, [lessonID]);
+
+        if (isfoundResult.rows.length === 0) {
+            throw new Error('The specified lesson has been deleted.');
+        }
+
+                const registerQuery = 'INSERT INTO watched_videos (lesson_id, user_id) VALUES ($1, $2) RETURNING *';
+                const registerResult = await db.query(registerQuery, [lessonID, userID]);
+
+                return registerResult.rows;
+            } 
+
+    catch (err) {
+        throw err;
+    }
+};
+
+
+Profile.addwish = async (userID, courseID) => {
+    try {
+    
+        const isFoundQuery = 'SELECT * FROM courses WHERE id = $1 AND is_deleted = false';
+        const isFoundResult = await db.query(isFoundQuery, [courseID]);
+
+        if (isFoundResult.rows.length === 0) {
+            throw new Error('The specified course has been deleted or does not exist.');
+        }
+
+        
+        const insertWishlistQuery = 'INSERT INTO witchlist (course_id, user_id) VALUES ($1, $2)';
+        await db.query(insertWishlistQuery, [courseID, userID]);
+
+    } catch (error) {
+       
+        return error.message;
+    }
+};
+
+
+Profile.getwitchlist = async (userID) => {
+    try {
+        const result = await db.query(`
+            SELECT witchlist.id, witchlist.created_at, courses.title
+            FROM witchlist
+            INNER JOIN courses ON courses.id = witchlist.course_id
+            WHERE witchlist.user_id = $1
+            ORDER BY created_at DESC;
+        `, [userID]);
+
+        return result.rows;
+    } catch (error) {
+        
+        throw error;
+    }
+};
+
+
+Profile.deletefromwitchlist = async (userID,whichID) =>{
+    try{
+
+        const result = await db.query(`
+            UPDATE witchlist
+            SET is_deleted = true
+            WHERE id = $1 AND user_id = $2;
+        `, [whichID, userID]);
+        return result.rows;
+    }catch(error){
+        res.status(500).json(error);
+    }
+};
+
+
 module.exports = Profile

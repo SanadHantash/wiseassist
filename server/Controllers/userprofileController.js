@@ -94,10 +94,60 @@ const userinfo = async (req, res, next) => {
       res.status(400).json({ success: false, error: 'Course registered faileds' });
     }
   }
+  const addlesson = async (req,res) =>{
+    try{
+      const lessonID = req.params.id;
+      const userID = req.user.userId;
+      await Profile.addlesson(userID, lessonID)
+      res.status(201).json({ success: true, message: 'lesson added successfully' });
+    }catch (err) {
+      console.error(err);
+      res.status(400).json({ success: false, error: 'lesson added faileds' });
+    }
+  }
+
+
+
+  const addtowishlist = async (req, res) => {
+    try {
+        const userID = req.user.userId;
+        const courseID = req.params.id;
+        await Profile.addwish(userID, courseID);
+        res.status(200).json('Course added to witchlist successfully');
+    } catch (error) {
+        res.status(400).json({ success: false, error: 'Course added to witchlist failed' });
+    }
+};
+
+const witchlist = async (req, res) => {
+    try{
+        const userID = req.user.userId;
+        const witchlist = await Profile.getwitchlist(userID);
+        res.status(200).json(witchlist);
+    } catch(error){
+        res.status(500).json(error);
+    }
+};
+
+
+const deletefromwitchlist = async (req, res)=>{
+  try{
+      const whichID = req.params.id;
+      const userID = req.user.userId;
+     await Profile.deletefromwitchlist(userID,whichID);
+      res.status(200).json('witchlist deleted successfuly');
+  } catch(error){
+    res.status(400).json({ success: false, error: 'witchlist deleted failed' });
+  }
+};
 
 module.exports = {
     userinfo,
     profilepicture,
     reginfreecourse,
-    reginpaidcourse
+    reginpaidcourse,
+    addlesson,
+    witchlist,
+    addtowishlist,
+    deletefromwitchlist
 }
