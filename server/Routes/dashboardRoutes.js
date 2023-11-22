@@ -24,6 +24,8 @@ router.put('/dashboard/question/:id/addanswer', middleware.authorize,dashboardCo
 router.put('/dashboard/answer/:id/update', middleware.authorize,dashboardController.updateanswer);
 router.put('/dashboard/answer/:id/delete', middleware.authorize,dashboardController.deleteanswer);
 router.put('/dashboard/techtip/:id/acceptcomment',middleware.authorize, dashboardController.acceptcomment);
+router.get('/dashboard/chatbox/:id',middleware.authorize, dashboardController.chatbox);
+router.post('/dashboard/sendmessage/:id',middleware.authorize, dashboardController.sendmessagetouser);
 router.post('/dashboard/login', dashboardController.login);
 
 

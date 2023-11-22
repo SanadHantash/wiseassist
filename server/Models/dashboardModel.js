@@ -326,4 +326,38 @@ WHERE
       }
     };
     
+    Dashboard.getrecivedmessages = async (sender, reciver) => {
+      try {
+          const result = await db.query('SELECT chat.id, chat.message, users.user_name FROM chat INNER JOIN users ON users.id = chat.sender_id WHERE chat.sender_id = $1 and chat.receiver_id = $2 ',[sender, reciver]);
+          return result.rows;
+      } catch (error) {
+          throw error;
+      }
+  };
+
+  Dashboard.getadmins = async () => {
+    try {
+        const result = await db.query('SELECT users.id, roles.role FROM users INNER JOIN roles ON roles.id = users.role_id WHERE roles.role = \'admin\'');
+        return result.rows.map(admin => admin.id);
+    } catch (err) {
+        throw err;
+    }
+  };
+  
+  Dashboard.sendmessagetouser =  async(sendersID, reciverID, message) =>{
+    const result = await db.query('insert into chat (sender_id,receiver_id,message)values ($1,$2,$3)',[sendersID, reciverID, message]);
+    return result.rows;
+}
+
+Dashboard.getsentmessages = async (senderID,reciverID) => {
+  try {
+      const result = await db.query('SELECT chat.id, chat.message,users.user_name FROM chat INNER JOIN users ON users.id = chat.sender_id WHERE users.role_id = 3 and chat.sender_id = $1 and chat.receiver_id = $2 ',[senderID,reciverID]);
+      return result.rows;
+  } catch (error) {
+      throw error;
+  }
+};
+
+
+
 module.exports = Dashboard;

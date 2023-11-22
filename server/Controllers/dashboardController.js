@@ -16,7 +16,7 @@ const createcourse = async (req, res) => {
 
    
     if (role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
     
     upload(req, res, async function (err) {
@@ -97,7 +97,7 @@ const allcourses = async (req, res, next) => {
 
    
     if (role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
     
     const courseId = req.params.id;
@@ -119,7 +119,7 @@ const updatecourse = async(req,res) => {
 
    
     if (role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
     
     const {title,detail,description,trainer,course_time,category_id,site } = req.body;
@@ -138,7 +138,7 @@ const deletecourse = async(req,res,next) =>{
 
    
     if (role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
     
     const courseID = req.params.id;
@@ -226,7 +226,7 @@ const alllessons = async (req, res, next) => {
 
    
     if (role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
     
     const courseID = req.params.id;
@@ -247,7 +247,7 @@ const alllessons = async (req, res, next) => {
 
    
     if (role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
     const lessonID = req.params.id;
     try {
@@ -269,7 +269,7 @@ const alllessons = async (req, res, next) => {
 
    
       if (role !== 'admin') {
-        return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
       }
       upload(req, res, async function (err) {
         if (err) {
@@ -304,7 +304,7 @@ const alllessons = async (req, res, next) => {
 
    
       if (role !== 'admin') {
-        return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
       }
       const course = await Dashboard.alltechtips();
   
@@ -324,7 +324,7 @@ const alllessons = async (req, res, next) => {
 
    
       if (role !== 'admin') {
-        return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+        return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
       }
       const techId = req.params.id;
       try {
@@ -345,7 +345,7 @@ const alllessons = async (req, res, next) => {
 
    
         if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
         }
         const {title, short_detail,detail} = req.body;
         const techId = req.params.id;
@@ -363,7 +363,7 @@ const alllessons = async (req, res, next) => {
 
    
         if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
         }
         const techId = req.params.id;
         await Dashboard.deletetechtip(techId);
@@ -380,7 +380,7 @@ const alllessons = async (req, res, next) => {
 
    
         if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
         }
         const question = await Dashboard.allquestions();
 
@@ -400,7 +400,7 @@ const alllessons = async (req, res, next) => {
 
    
         if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
         }
     
           const questionID = req.params.id;
@@ -428,7 +428,7 @@ const alllessons = async (req, res, next) => {
 
    
         if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
         }
           const answerID = req.params.id;
           const {answer} = req.body;
@@ -454,7 +454,7 @@ const alllessons = async (req, res, next) => {
 
    
         if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
         }
         const answerID = req.params.id;
         await Dashboard.deleteanswer(answerID);
@@ -472,7 +472,7 @@ const alllessons = async (req, res, next) => {
 
    
         if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
         }
         const techID = req.params.id;
         await Dashboard.acceptcomment(techID);
@@ -499,7 +499,7 @@ const alllessons = async (req, res, next) => {
     
         if (role !== 'admin') {
           
-          return res.status(401).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+          return res.status(401).json({ success: false, message: 'Access denied. Only admin are allowed.' });
         }
     
         const token = jwt.sign({ userId: id, email, role }, process.env.SECRET_KEY, { expiresIn: '4h' });
@@ -511,6 +511,106 @@ const alllessons = async (req, res, next) => {
       }
     };
     
+
+    const getrecivedmessages = async (req,res)=>{
+      try{
+        const {role } = req.user;
+
+
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+        }
+        const reciverID = req.user.userId;
+        const senderID = req.params.id;
+
+        const messages = await Dashboard.getrecivedmessages(senderID,reciverID);
+        res.status(200).json({ success: true, message:messages });
+      }catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+      }
+    }
+
+
+    const getadmins = async(req,res) =>{
+      try{
+        await Chat.getadmins();
+        
+      }catch(err){
+          console.error(err);
+          res.status(400).json({ success: false, error: 'admins get failed' });
+      }
+  }
+  
+
+    const sendmessagetouser = async(req,res) =>{
+      try{
+        const {role } = req.user;
+
+
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+        }
+          const senderID = await Dashboard.getadmins();;
+         const reciverID = req.params.id;
+          const {message} = req.body;
+  
+          for (const sendersID of senderID) {
+              await Dashboard.sendmessagetouser(sendersID, reciverID, message);
+          }
+          res.status(201).json({ success: true, message: 'message sent successfully' });
+      }catch(err){
+          console.error(err);
+          res.status(400).json({ success: false, error: 'message sent failed' });
+      }
+  }
+
+  const getsentmessages = async (req,res)=>{
+    try{
+      const {role } = req.user;
+
+
+      if (role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+      }
+      const  senderID = req.user.userId;
+      const  reciverID = req.params.id;
+
+      const messages = await Dashboard.getsentmessages(senderID,reciverID);
+      res.status(200).json({ success: true, message:messages });
+    }catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Internal server error' });
+    }
+  }
+
+
+
+  const chatbox = async(req,res)=>{
+      try{
+        const {role } = req.user;
+
+
+        if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+        }
+
+        const  senderID = req.user.userId;
+        const  reciverID = req.params.id;
+
+
+        const reciver = req.user.userId;
+        const sender = req.params.id;
+        
+        
+      const receivedMessages = await Dashboard.getrecivedmessages(sender, reciver);
+    const sentMessages = await Dashboard.getsentmessages(senderID, reciverID);
+    res.status(200).json({ success: true, receivedMessages, sentMessages });
+      }catch (err) {
+        console.error(err);
+        res.status(500).json({ success: false, message: 'Internal server error' });
+      }
+  }
 
 module.exports = {
     createcourse,
@@ -532,5 +632,7 @@ module.exports = {
     updateanswer,
     deleteanswer,
     acceptcomment,
-    login
+    login,
+    sendmessagetouser,
+    chatbox
 }
