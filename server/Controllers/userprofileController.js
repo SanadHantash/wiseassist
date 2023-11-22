@@ -1,4 +1,5 @@
 const Profile = require('../Models/userprofileModel');
+const Course = require('../Models/courseModel')
 const multer  = require('multer');
 const path = require('path');
 
@@ -72,28 +73,8 @@ const userinfo = async (req, res, next) => {
   };
  
   
-  const reginfreecourse = async (req,res) =>{
-    try{
-      const courseID = req.params.id;
-      const userID = req.user.userId;
-      await Profile.reginfreecourse(userID, courseID)
-      res.status(201).json({ success: true, message: 'Course registerd successfully' });
-    }catch (err) {
-      console.error(err);
-      res.status(400).json({ success: false, error: 'Course registered failed' });
-    }
-  }
-  const reginpaidcourse = async (req,res) =>{
-    try{
-      const courseID = req.params.id;
-      const userID = req.user.userId;
-      await Profile.reginpaidcourse(userID, courseID)
-      res.status(201).json({ success: true, message: 'Course registerd successfully' });
-    }catch (err) {
-      console.error(err);
-      res.status(400).json({ success: false, error: 'Course registered faileds' });
-    }
-  }
+
+
   const addlesson = async (req,res) =>{
     try{
       const lessonID = req.params.id;
@@ -141,13 +122,86 @@ const deletefromwitchlist = async (req, res)=>{
   }
 };
 
+
+const regincourse = async (req, res) => {
+  try {
+    const courseID = req.params.id;
+    
+    const courseDetails = await Course.detail(courseID);
+
+    if (!courseDetails || courseDetails.length === 0) {
+      throw new Error('Course not found');
+    }
+
+    const is_paid = courseDetails[0].is_paid; 
+
+    if (is_paid === true) { 
+      const userID = req.user.userId;
+      await Profile.reginpaidcourse(userID, courseID);
+      res.status(201).json({ success: true, message: 'Paid course registered successfully' });
+    } else if (is_paid === false) { 
+      const userID = req.user.userId;
+      await Profile.reginfreecourse(userID, courseID);
+      res.status(201).json({ success: true, message: 'Free course registered successfully' });
+    } else {
+      throw new Error('Invalid value for is_paid parameter');
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ success: false, error: err.message || 'Course registration failed' });
+  }
+};
+
+
+const getregisteredcourses = async (req, res, next) => {
+
+  try {
+    const userID = req.user.userId
+    const courses = await Profile.getregisteredcourses(userID);
+    res.status(200).json({ success: true, courses });
+  } 
+  
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Error in getting courses' });
+  }
+};
+
+const getregisteredworkshops = async (req, res, next) => {
+
+  try {
+    const userID = req.user.userId
+    const courses = await Profile.getregisteredworkshops(userID);
+    res.status(200).json({ success: true, courses });
+  } 
+  
+  catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Error in getting workshops' });
+  }
+};
+
+const mywatchedvideos = async (req, res) => {
+  try {
+    const userID = req.user.userId;
+    const lessons = await Profile.mywatchedvideos(userID);
+    res.status(200).json({ success: true, lessons });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Error in getting videos' });
+  }
+};
+
+
 module.exports = {
     userinfo,
     profilepicture,
-    reginfreecourse,
-    reginpaidcourse,
     addlesson,
     witchlist,
     addtowishlist,
-    deletefromwitchlist
+    deletefromwitchlist,
+    regincourse,
+    getregisteredcourses,
+    getregisteredworkshops,
+    mywatchedvideos
 }

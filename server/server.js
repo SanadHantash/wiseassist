@@ -15,6 +15,9 @@ const dashboardRouter = require('./Routes/dashboardRoutes');
 const googleRoute = require("./Routes/googleRoute");
 const userprofileRoute = require("./Routes/userprofileRoute");
 const techtipRoute = require("./Routes/techtipRoute");
+const faqRoute = require("./Routes/faqRoute");
+const chatRoute = require("./Routes/chatRoute")
+const homeRoute = require("./Routes/homeRoute")
 app.use(session({ secret: "cats", resave: true, saveUninitialized: true }));
 
 
@@ -32,6 +35,9 @@ app.use(courseRouter);
 app.use(dashboardRouter);
 app.use(userprofileRoute);
 app.use(techtipRoute);
+app.use(faqRoute);
+app.use(chatRoute);
+app.use(homeRoute);
 
 
 

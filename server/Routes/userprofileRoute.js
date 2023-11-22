@@ -8,8 +8,10 @@ const middleware = require('../middleware/authorization');
 
 router.get('/profile', middleware.authorize, userprofileController.userinfo);
 router.put('/profile/uploadimage', middleware.authorize, userprofileController.profilepicture);
-router.post('/coursefreeregister/:id', middleware.authorize, userprofileController.reginfreecourse);
-router.post('/coursepaidregister/:id', middleware.authorize, userprofileController.reginpaidcourse);
+router.post('/courseregister/:id', middleware.authorize, userprofileController.regincourse);
+router.get('/profile/mycourses', middleware.authorize, userprofileController.getregisteredcourses);
+router.get('/profile/myworkshops', middleware.authorize, userprofileController.getregisteredworkshops);
+router.get('/profile/mywatchedvideos', middleware.authorize, userprofileController.mywatchedvideos);
 router.post('/addlesson/:id', middleware.authorize, userprofileController.addlesson);
 router.post('/addtowhichlist/:id', middleware.authorize, userprofileController.addtowishlist);
 router.get('/mywhitchlist', middleware.authorize, userprofileController.witchlist);

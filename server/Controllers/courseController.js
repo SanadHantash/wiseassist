@@ -95,42 +95,13 @@ const allelderliesworkshops = async (req, res, next) => {
     }
   };
 
-  const alllessonsfree = async (req, res, next) => {
-
-    try {
-      const courseID = req.params.id;
-      const userID = req.user.userid;
-      const course = await Course.alllessonsfree(userID,courseID);
   
-    
-      res.status(200).json(course); 
-    } 
-    catch (err) {
-        console.error(err);
-        res.status(400).json({ success: false, error: 'Error in getting lessons' });
-      }
-    };
-  const alllessonspaid = async (req, res, next) => {
-
-    try {
-      const courseID = req.params.id;
-      const userID = req.user.userId;
-      const course = await Course.alllessonspaid(userID,courseID);
-  
-    
-      res.status(200).json(course); 
-    } 
-    catch (err) {
-        console.error(err);
-        res.status(400).json({ success: false, error: 'Error in getting lessons' });
-      }
-    };
   
     const lessonpage = async (req, res) => {
       const lessonID = req.params.id;
-      const userID = req.user.userid;
+    
       try {
-        const course = await Course.alllessonspaid(lessonID);
+        const course = await Course.lessonpage(lessonID);
         res.status(200).json({ success: true, course });
       } 
       
@@ -141,15 +112,42 @@ const allelderliesworkshops = async (req, res, next) => {
     };
   
 
+    const alllesons = async (req, res) => {
+      try {
+        const courseID = req.params.id;
+        
+        const courseDetails = await Course.detail(courseID);
+    
+        if (!courseDetails || courseDetails.length === 0) {
+          throw new Error('Course not found');
+        }
+    
+        const is_paid = courseDetails[0].is_paid; 
+    
+        if (is_paid === true) { 
+          const userID = req.user.userId;
+         const lessons =  await Course.alllessonspaid(userID, courseID);
+          res.status(201).json({ success: true, lessons });
+        } else if (is_paid === false) { 
+          const lessons =  await Course.alllessonsfree(courseID);
+          res.status(201).json({ success: true, lessons });
+        } else {
+          throw new Error('Invalid value for is_paid parameter');
+        }
+      } catch (err) {
+        console.error(err);
+        res.status(400).json({ success: false, error: err.message || 'Course registration failed' });
+      }
+    };
+
 module.exports = {
     allelderliescourses,
     onsiteelderliescourses,
     onlineelderliescourses,
     detail,
-    alllessonsfree,
-    alllessonspaid,
     lessonpage,
     allelderliesworkshops,
     onsiteworkshops,
-    onlineworkshops
+    onlineworkshops,
+    alllesons
   };
