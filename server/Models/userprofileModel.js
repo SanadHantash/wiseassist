@@ -1,7 +1,8 @@
 const db = require('../config');
 const jwt = require('jsonwebtoken');
-const Profile = {};
 const { admin, storage } = require('../firebase');
+const Profile = {};
+
 
 Profile.userinfo = async (userID) => {
     try{
@@ -39,57 +40,39 @@ Profile.profilepicture  = async (userID,imageUrl) => {
 
 Profile.reginfreecourse = async (userID, courseID) => {
     try {
+      const registerQuery = 'INSERT INTO course_attendances (course_id, user_id) VALUES ($1, $2) RETURNING *';
+      const registerResult = await db.query(registerQuery, [courseID, userID]);
   
-        const isFreeQuery = 'SELECT * FROM courses WHERE courses.id = $1 AND is_paid = false AND is_deleted = false';
-        const isFreeResult = await db.query(isFreeQuery, [courseID]);
-
-        if (isFreeResult.rows.length === 0) {
-            throw new Error('The specified course is not free.');
-        }
-
-     
-        const registerQuery = 'INSERT INTO course_attendances (course_id, user_id) VALUES ($1, $2) RETURNING *';
-        const registerResult = await db.query(registerQuery, [courseID, userID]);
-
-        return registerResult.rows;
+      return registerResult.rows;
     } catch (err) {
-        throw err;
+      throw err;
     }
-};
-
-Profile.reginpaidcourse = async (userID, courseID) => {
+  };
+  
+  Profile.reginpaidcourse = async (userID, courseID) => {
     try {
-       
-        const isPaidQuery = 'SELECT * FROM courses WHERE id = $1 AND is_paid = true AND is_deleted = false';
-        const isPaidResult = await db.query(isPaidQuery, [courseID]);
-
-        if (isPaidResult.rows.length === 0) {
-            throw new Error('The specified course is not paid or has been deleted.');
-        }
-
-
-        const userRoleQuery = 'SELECT users.role_id, roles.role FROM users INNER JOIN roles ON users.role_id = roles.id WHERE users.id = $1 AND users.is_deleted = false';
-        const userRoleResult = await db.query(userRoleQuery, [userID]);
-
-        if (userRoleResult.rows.length > 0) {
-            const userRole = userRoleResult.rows[0].role; 
-            if (userRole === 'subscriber') {
-           
-                const registerQuery = 'INSERT INTO course_attendances (course_id, user_id) VALUES ($1, $2) RETURNING *';
-                const registerResult = await db.query(registerQuery, [courseID, userID]);
-
-                return registerResult.rows;
-            } else {
-                throw new Error('You are not subscribed to access paid courses.');
-            }
+      const userRoleQuery = 'SELECT users.role_id, roles.role FROM users INNER JOIN roles ON users.role_id = roles.id WHERE users.id = $1 AND users.is_deleted = false';
+      const userRoleResult = await db.query(userRoleQuery, [userID]);
+  
+      if (userRoleResult.rows.length > 0) {
+        const userRole = userRoleResult.rows[0].role;
+        if (userRole === 'subscriber') {
+          const registerQuery = 'INSERT INTO course_attendances (course_id, user_id) VALUES ($1, $2) RETURNING *';
+          const registerResult = await db.query(registerQuery, [courseID, userID]);
+  
+          return registerResult.rows;
+        } else if (userRole === 'unsubscriber') {
+          throw new Error('You are not subscribed to access paid courses.');
         } else {
-            throw new Error('User not found or is deleted.');
+          throw new Error('Invalid user role');
         }
-
+      } else {
+        throw new Error('User not found or is deleted.');
+      }
     } catch (err) {
-        throw err;
+      throw err;
     }
-};
+  };
 
 
 Profile.addlesson = async (userID, lessonID) => {
@@ -167,5 +150,197 @@ Profile.deletefromwitchlist = async (userID,whichID) =>{
     }
 };
 
+
+Profile.getregisteredcourses = async (userID) => {
+    try {
+        const queryResult = await db.query(`
+        SELECT 
+        courses.id,
+  courses.title,
+  courses.description,
+  courses.trainer,
+  REPLACE(courses.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image,
+  categories.category,
+  courses.start_time,
+  courses.end_time,
+  courses.site
+FROM 
+  course_attendances
+  INNER JOIN courses ON courses.id = course_attendances.course_id
+  INNER JOIN categories ON categories.id = courses.category_id
+WHERE 
+  course_attendances.is_deleted = false
+  AND courses.is_deleted = false
+  AND (courses.category_id = 1 OR courses.category_id = 2)
+  AND course_attendances.user_id = $1;
+      `,[userID]);
+        
+      const formattedResult = await Promise.all(
+        queryResult.rows.map(async (row) => {
+          if (row.start_time !== null) {
+            row.start_time = row.start_time.toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: 'numeric',
+            });
+  
+            
+  
+            
+            if (row.end_time !== null) {
+              row.end_time = row.end_time.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+              });
+            }
+            
+          }
+      
+          const imageRef = storage.bucket().file('images/' + row.image);
+          const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
+          row.image = url;
+      
+          return row;
+        })
+      );
+    
+        return formattedResult;
+      } catch (err) {
+        throw err;
+      }
+}
+Profile.getregisteredworkshops = async (userID) => {
+    try {
+        const queryResult = await db.query(`
+        SELECT 
+        courses.id,
+  courses.title,
+  courses.description,
+  courses.trainer,
+  REPLACE(courses.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image,
+  categories.category,
+  courses.start_time,
+  courses.end_time,
+  courses.site
+FROM 
+  course_attendances
+  INNER JOIN courses ON courses.id = course_attendances.course_id
+  INNER JOIN categories ON categories.id = courses.category_id
+WHERE 
+  course_attendances.is_deleted = false
+  AND courses.is_deleted = false
+  AND (courses.category_id = 3 OR courses.category_id = 4)
+  AND course_attendances.user_id = $1;
+      `,[userID]);
+        
+      const formattedResult = await Promise.all(
+        queryResult.rows.map(async (row) => {
+          if (row.start_time !== null) {
+            row.start_time = row.start_time.toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: 'numeric',
+            });
+  
+            
+  
+            
+            if (row.end_time !== null) {
+              row.end_time = row.end_time.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+              });
+            }
+            
+          }
+      
+          const imageRef = storage.bucket().file('images/' + row.image);
+          const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
+          row.image = url;
+      
+          return row;
+        })
+      );
+    
+        return formattedResult;
+      } catch (err) {
+        throw err;
+      }
+}
+
+Profile.mywatchedvideos = async (userID) => {
+    try {
+      const queryResult = await db.query(`
+      SELECT 
+      lesson.id,
+      lesson.title,
+      REPLACE(lesson.video, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/videos/', '') AS video
+    FROM 
+      watched_videos
+      INNER JOIN lesson ON lesson.id = watched_videos.lesson_id
+    WHERE 
+      watched_videos.user_id = $1;
+      `, [userID]);
+      const formattedResult = await Promise.all(
+        queryResult.rows.map(async (row) => {
+  
+          const videRef = storage.bucket().file('videos/' + row.video);
+          const [url] = await videRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
+          row.video = url;
+  
+          return row;
+        })
+     
+      );
+      return formattedResult
+  
+    
+    } catch (err) {
+      throw err;
+    }
+
+    } 
+  
+
+    Profile.checkUserExistence = async (email, user_name, phonenumber) => {
+      const checkEmail = await db.query('SELECT * FROM users WHERE email = $1;', [email]);
+      const checkUsername = await db.query('SELECT * FROM users WHERE user_name = $1;', [user_name]);
+      const checkPhone = await db.query('SELECT * FROM users WHERE phonenumber = $1;', [phonenumber]);
+  
+      if (checkEmail.rows.length > 0) {
+      throw new Error("invalid email");
+      }
+      if (checkUsername.rows.length > 0) {
+      throw new Error("invalid username");
+      }
+      if (checkPhone.rows.length > 0) {
+      throw new Error("invalid phonenumber");
+      }
+  
+      return true; 
+      };
+
+      Profile.updateinfo= async (userID,first_name,last_name,user_name, email,phonenumber)=>{
+    
+        try {
+        
+            const result = await db.query('update users set first_name = $2 , last_name = $3 ,user_name =$4, email = $5, phonenumber = $6 where id = $1 ', [userID,first_name,last_name,user_name, email,phonenumber]);
+            return result.rows;
+    
+
+    } catch (err) {
+        throw err;
+    }
+}
 
 module.exports = Profile

@@ -140,6 +140,93 @@ const allelderliesworkshops = async (req, res, next) => {
       }
     };
 
+    const addratetocourse = async (req, res) => {
+      const {rate } = req.body;
+      const courseID = req.params.id;
+      const userID = req.user.userId;
+      try {
+          await Course.addratetocourse(courseID, userID, rate);
+      
+          res.status(200).json({ success: true, message: 'your rate added successfully' });
+      } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
+      }
+  };
+
+
+  const addcommenttocourse = async (req, res) => {
+    const { comment } = req.body;
+    const courseID = req.params.id;
+    const userID = req.user.userId;
+    console.log(userID);
+    try {
+        await Course.addcommenttocourse(courseID, userID, comment);
+        res.status(200).json({ success: true, message: 'Your comment added successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
+const getcoursecomments = async (req, res) => {
+    const courseID = req.params.id;
+  try {
+    const comments = await Course.getcoursecomments(courseID); 
+    res.status(200).json({ success: true, comments });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Error in getting comments' });
+  }
+};
+
+
+
+    const addratetolesson = async (req, res) => {
+      const {rate } = req.body;
+      const lessonID = req.params.id;
+      const userID = req.user.userId;
+      try {
+          await Course.addratetolesson(lessonID, userID, rate);
+      
+          res.status(200).json({ success: true, message: 'your rate added successfully' });
+      } catch (error) {
+          console.error(error);
+          res.status(500).json({ error: 'Internal Server Error' });
+      }
+  };
+
+
+  const addcommenttolesson = async (req, res) => {
+    const { comment } = req.body;
+    const lessonID = req.params.id;
+    const userID = req.user.userId;
+    console.log(userID);
+    try {
+        await Course.addcommenttolesson(lessonID, userID, comment);
+        res.status(200).json({ success: true, message: 'Your comment added successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+};
+
+
+const getlessoncomments = async (req, res) => {
+    const lessonID = req.params.id;
+  try {
+    const comments = await Course.getlessoncomments(lessonID); 
+    res.status(200).json({ success: true, comments });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, error: 'Error in getting comments' });
+  }
+};
+
+
+
+
 module.exports = {
     allelderliescourses,
     onsiteelderliescourses,
@@ -149,5 +236,11 @@ module.exports = {
     allelderliesworkshops,
     onsiteworkshops,
     onlineworkshops,
-    alllesons
+    alllesons,
+    addratetocourse,
+    addcommenttocourse,
+    getcoursecomments,
+    addratetolesson,
+    addcommenttolesson,
+    getlessoncomments
   };

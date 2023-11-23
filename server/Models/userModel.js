@@ -34,7 +34,7 @@ User.checkUserExistence = async (email, user_name, phonenumber) => {
 
 User.login = async (email) => {
     try {
-      const user = await db.query('SELECT id, email, is_deleted FROM users WHERE email = $1;', [email]);
+      const user = await db.query('SELECT id, email,user_name,role is_deleted FROM users WHERE email = $1;', [email]);
       if (user.rows[0]) {
         return user.rows[0];
       } else {

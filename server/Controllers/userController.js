@@ -43,8 +43,11 @@ const register = async (req, res) => {
     try {
         await User.checkUserExistence(email, user_name, phonenumber);
       const hashedPassword = await bcrypt.hash(password, 10);
-      await User.register(first_name, last_name, user_name, email, hashedPassword, phonenumber, birthdate);
-      res.status(201).json({ success: true, message: 'User added successfully' });
+     const user =  await User.register(first_name, last_name, user_name, email, hashedPassword, phonenumber, birthdate);
+      const token = jwt.sign({ userId: user.id, email: user.email,username:user.user_name,role:user.role }, process.env.SECRET_KEY, { expiresIn: '4h' });
+      res.cookie('token', token, { httpOnly: true });
+      res.status(201).json({ success: true, message: 'User added successfully',token });
+     
     } catch (err) {
         console.error(err);
         if (err.message === 'Email already exists' || err.message === 'Username already exists' || err.message === 'Phonenumber already exists') {
@@ -66,7 +69,7 @@ const register = async (req, res) => {
       }
   
       console.log(user.id);
-      const token = jwt.sign({ userId: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: '4h' });
+      const token = jwt.sign({ userId: user.id,username:user.user_name, email: user.email,role:user.role }, process.env.SECRET_KEY, { expiresIn: '4h' });
       res.cookie('token', token, { httpOnly: true });
       res.status(200).json({ success: true, message: 'Successfully signed in', token });
     } catch (err) {
@@ -95,7 +98,7 @@ const createCheckoutSession = async (req, res) => {
   
     const customer = await stripe.customers.create({
       email: req.user.email, 
-      name: req.user.user_name, 
+      name: req.user.username, 
       metadata: {
         userId: userID,
       },

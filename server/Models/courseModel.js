@@ -355,6 +355,7 @@ Course.allelderliesworkshops = async () => {
           courses.id,
           courses.title,
           courses.description,
+          courses.detail,
           courses.trainer,
           REPLACE(courses.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image,
           categories.category,
@@ -437,7 +438,7 @@ Course.allelderliesworkshops = async () => {
     }
   };
 
- 
+
 
   Course.alllessonsfree = async (courseID) => {
     try {
@@ -481,6 +482,98 @@ Course.allelderliesworkshops = async () => {
       throw err;
     }
   };
+
+
+  Course.addratetocourse = async (courseID, userID, rate) => {
+    try {
+    
+        const insertrating = await db.query(
+            `
+            INSERT INTO course_reaction (rate, user_id, course_id) VALUES ($1, $2, $3) RETURNING rate
+            `,
+            [rate, userID, courseID]
+        );
+        
+      insertrating.rows[0].rate;
+
+        const result = await db.query(
+            'UPDATE courses SET rate= (SELECT AVG(rate) FROM course_reaction WHERE course_id = $1) WHERE id = $1 RETURNING *',
+            [courseID]
+        );
+
+        return result;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+
+Course.addcommenttocourse = async (courseID, userID, comment) => {
+  try {
+      const result = await db.query('INSERT INTO course_reaction (course_comment, user_id, course_id) VALUES ($1, $2, $3)', [comment, userID, courseID]);
+      return result;
+  } catch (error) {
+      console.error(error);
+      throw error;
+  }
+};
+
+Course.getcoursecomments = async (courseID) => {
+  try {
+    const result = await db.query('SELECT course_reaction.id,  course_reaction.course_comment, users.user_name FROM course_reaction INNER JOIN users ON users.id = course_reaction.user_id   WHERE course_id = $1 AND course_reaction.is_deleted = false AND course_reaction.is_available = true', [courseID]);
+    return result.rows;
+  } catch (error) {
+    console.error(error.message);
+    throw error;
+  }
+};
+
+  Course.addratetolesson = async (lessonID, userID, rate) => {
+    try {
+    
+        const insertrating = await db.query(
+            `
+            INSERT INTO lesson_reaction (rate, user_id, lesson_id) VALUES ($1, $2, $3) RETURNING rate
+            `,
+            [rate, userID, lessonID]
+        );
+        
+      insertrating.rows[0].rate;
+
+        const result = await db.query(
+            'UPDATE lesson SET rate= (SELECT AVG(rate) FROM lesson_reaction WHERE lesson_id = $1) WHERE id = $1 RETURNING *',
+            [lessonID]
+        );
+
+        return result;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
+};
+
+
+Course.addcommenttolesson = async (lessonID, userID, comment) => {
+  try {
+      const result = await db.query('INSERT INTO lesson_reaction (lesson_comment, user_id, lesson_id) VALUES ($1, $2, $3)', [comment, userID, lessonID]);
+      return result;
+  } catch (error) {
+      console.error(error);
+      throw error;
+  }
+};
+
+Course.getlessoncomments = async (lessonID) => {
+  try {
+    const result = await db.query('SELECT lesson_reaction.id,  lesson_reaction.lesson_comment, users.user_name FROM lesson_reaction INNER JOIN users ON users.id = lesson_reaction.user_id  WHERE lesson_id = $1 AND lesson_reaction.is_deleted = false AND lesson_reaction.is_available = true', [lessonID]);
+    return result.rows;
+  } catch (error) {
+    console.error(error.message);
+    throw error;
+  }
+};
+
 
   
   

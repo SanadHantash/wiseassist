@@ -26,7 +26,62 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
           courses
           INNER JOIN categories ON categories.id = courses.category_id
         WHERE 
-          courses.is_deleted = false;
+          courses.is_deleted = false and (courses.category_id = 1 or courses.category_id = 2);
+      `);
+    
+      const formattedResult = await Promise.all(
+        queryResult.rows.map(async (row) => {
+          if (row.start_time !== null) {
+            row.start_time = row.start_time.toLocaleDateString('en-US', {
+              weekday: 'long',
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              hour: 'numeric',
+            });
+            if (row.end_time !== null) {
+              row.end_time = row.end_time.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+              });
+            }
+          }
+          const imageRef = storage.bucket().file('images/' + row.image);
+          const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
+          row.image = url;
+      
+          return row;
+        })
+      );
+    
+        return formattedResult;
+      } catch (err) {
+        throw new Error(`Error retrieving courses: ${err.message}`);
+      }
+    };
+
+    
+    Dashboard.allworkshops = async () => {
+      try {
+        const queryResult = await db.query(`
+        SELECT 
+          courses.id,
+          courses.title,
+          courses.description,
+          courses.trainer,
+          REPLACE(courses.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image,
+          categories.category,
+          courses.start_time,
+          courses.end_time,
+          courses.site
+        FROM 
+          courses
+          INNER JOIN categories ON categories.id = courses.category_id
+        WHERE 
+          courses.is_deleted = false and (courses.category_id = 3 or courses.category_id = 4);
       `);
     
       const formattedResult = await Promise.all(
@@ -303,7 +358,7 @@ WHERE
     }
     
 
-    Dashboard.acceptcomment = async (techID) => {
+    Dashboard.accepttechtipcomment = async (techID) => {
       try {
         const result = await db.query('UPDATE techtip_comment SET is_available = TRUE  WHERE techtip_comment.id = $1 RETURNING * ', [techID]);
         return result.rows;
@@ -358,6 +413,23 @@ Dashboard.getsentmessages = async (senderID,reciverID) => {
   }
 };
 
+
+Dashboard.acceptcoursecomment = async (courseID) => {
+  try {
+    const result = await db.query('UPDATE course_reaction SET is_available = TRUE  WHERE course_reaction.id = $1 RETURNING * ', [courseID]);
+    return result.rows;
+  } catch (err) {
+    throw err;
+  }
+}
+Dashboard.acceptlessoncomment = async (lessonID) => {
+  try {
+    const result = await db.query('UPDATE lesson_reaction SET is_available = TRUE  WHERE lesson_reaction.id = $1 RETURNING * ', [lessonID]);
+    return result.rows;
+  } catch (err) {
+    throw err;
+  }
+}
 
 
 module.exports = Dashboard;
