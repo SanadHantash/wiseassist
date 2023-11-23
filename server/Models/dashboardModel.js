@@ -3,8 +3,8 @@ const jwt = require('jsonwebtoken');
 const { admin, storage } = require('../firebase');
 const Dashboard = {};
 
-Dashboard.createcourse = async (title,detail,description,trainer,course_time,category_id,imageUrl,audince_id,site) => {
-        const result = await db.query('INSERT INTO courses (title,detail,description,trainer,course_time,category_id,image,audince_id,site)  VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9)', [title,detail,description,trainer,course_time,category_id,imageUrl,audince_id,site]);
+Dashboard.createcourse = async (title,detail,description,trainer,start_time,end_time,category_id,imageUrl,audince_id,site) => {
+        const result = await db.query('INSERT INTO courses (title,detail,description,trainer,start_time,end_time,category_id,image,audince_id,site)  VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10)', [title,detail,description,trainer,start_time,end_time,category_id,imageUrl,audince_id,site]);
         return result.rows;
     };
 
@@ -128,7 +128,8 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
           courses.trainer,
           REPLACE(courses.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image,
           categories.category,
-          courses.course_time,
+          start_time,
+          end_time,
           courses.site
         FROM 
           courses
@@ -137,24 +138,39 @@ Dashboard.createcourse = async (title,detail,description,trainer,course_time,cat
           courses.id=$1 and courses.is_deleted = false;
       `,[courseId]);
           
-        const formattedResult = await Promise.all(
-          queryResult.rows.map(async (row) => {
-            row.course_time = row.course_time.toLocaleDateString('en-US', {
+      const formattedResult = await Promise.all(
+        queryResult.rows.map(async (row) => {
+          if (row.start_time !== null) {
+            row.start_time = row.start_time.toLocaleDateString('en-US', {
               weekday: 'long',
               year: 'numeric',
               month: 'long',
               day: 'numeric',
               hour: 'numeric',
             });
-    
   
-            const imageRef = storage.bucket().file('images/' + row.image);
-            const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
-            row.image = url;
-    
-            return row;
-          })
-        );
+            
+  
+            
+            if (row.end_time !== null) {
+              row.end_time = row.end_time.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: 'numeric',
+              });
+            }
+            
+          }
+      
+          const imageRef = storage.bucket().file('images/' + row.image);
+          const [url] = await imageRef.getSignedUrl({ action: 'read', expires: '01-01-2500' });
+          row.image = url;
+      
+          return row;
+        })
+      );
         return formattedResult;
       } catch (err) {
         throw err;

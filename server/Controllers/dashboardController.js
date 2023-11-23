@@ -24,7 +24,7 @@ const createcourse = async (req, res) => {
         return res.status(400).json({ success: false, error: err.message });
       }
 
-      const { title, detail, description, trainer, course_time, category_id, audince_id, site } = req.body;
+      const { title, detail, description, trainer, start_time,end_time, category_id, audince_id, site } = req.body;
       const imageBuffer = req.file ? req.file.buffer : null;
 
       const imageUrl = await uploadImageToFirebase(imageBuffer);
@@ -34,7 +34,8 @@ const createcourse = async (req, res) => {
         detail,
         description,
         trainer,
-        course_time,
+        start_time,
+        end_time,
         category_id,
         imageUrl,
         audince_id,
