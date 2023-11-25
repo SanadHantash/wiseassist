@@ -705,12 +705,13 @@ Dashboard.mostenrolledcourse = async()=>{
 
 Dashboard.mostenrolledworkshop = async()=>{
   try{
-    const result = await db.query('SELECT lesson_id, lesson.title FROM watched_videos INNER JOIN lesson ON lesson.id = watched_videos.lesson_id WHERE lesson.is_deleted = false GROUP BY lesson_id, lesson.title ORDER BY COUNT(lesson_id) DESC LIMIT 1;');
+    const result = await db.query('course_id,courses.title FROM course_attendances inner join courses on courses.id = course_attendances.course_id where courses.is_deleted = false and (courses.category_id = 3 or courses.category_id = 4) GROUP BY course_id,courses.title ORDER BY COUNT(course_id) DESC LIMIT 1;');
     return result.rows
   }catch (err) {
     throw err;
   }
 }
+
 
 
 Dashboard.mostviewedvideo = async()=>{
