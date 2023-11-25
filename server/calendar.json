@@ -1,15 +1,4 @@
-DB_USER = sanad
-DB_PASSWORD = sanad
-DB_HOST = localhost
-DB_PORT = 5432
-DB_NAME = wiseassist
-SECRET_KEY = 8d00285ecc43735bac65b905f8146003f6fea944bdc2197b013de6610926ad0222a1cc0641c0f48287c37938cf2081612b89e7ec82b7d60dcbb80609b7d84d81
-STRIPE_PUBLISHABLE_KEY=pk_test_51O6ir2JHXfBpbbMkPbKEGUGpcDt2kKbOavmI201QuITZ8F3Y48KGAOPE3hvYfSuJcIdhDa8gk7KvAW2FeiwBDPF5004smsWbGA
-STRIPE_SECRET_KEY=sk_test_51O6ir2JHXfBpbbMktzwHEfspIYHrPpt6g1eRGBDFiVMtRPqmA2thnc0dC3NVNsEF9xACFCbqeW4tnYwlWPn1topp00aFwRfYxL
-GOOGLECLIENTID = 894280073944-9839aup0ucjb0a0oba1u5acv7fotp4lf.apps.googleusercontent.com
-GOOGLECLIENTSECRET = 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
-CHECKOUT_SESSION_ID = price_1OAyC3JHXfBpbbMklLDZFaTO 
-CREDENTIALS = {
+{
     "type": "service_account",
     "project_id": "wiseassist-b8a8a",
     "private_key_id": "7d974112d522ad2448e8b146af862441599f9ef9",
@@ -21,6 +10,5 @@ CREDENTIALS = {
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-izm56%40wiseassist-b8a8a.iam.gserviceaccount.com",
     "universe_domain": "googleapis.com"
-};
+  }
   
-CALENDAR_ID = f6799ee5ef68b8e3ef6ed0034fe0528ced3eb296d96711854f218a714d434df2@group.calendar.google.com   
