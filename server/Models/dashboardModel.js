@@ -3,10 +3,28 @@ const jwt = require('jsonwebtoken');
 const { admin, storage } = require('../firebase');
 const Dashboard = {};
 
-Dashboard.createcourse = async (title,detail,description,trainer,start_time,end_time,category_id,imageUrl,audince_id,site) => {
-        const result = await db.query('INSERT INTO courses (title,detail,description,trainer,start_time,end_time,category_id,image,audince_id,site)  VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10)', [title,detail,description,trainer,start_time,end_time,category_id,imageUrl,audince_id,site]);
-        return result.rows;
-    };
+Dashboard.getCourseById = async (courseID) => {
+  try {
+    const result = await db.query('SELECT courses.id,courses.title,courses.description,courses.detail,courses.image,courses.start_time,courses.end_time,courses.trainer,courses.is_paid,courses.site FROM courses WHERE courses.id = $1', [courseID]);
+    return result.rows[0]; // Return the first (and only) element of the array
+  } catch (error) {
+    throw error;
+  }
+}
+
+Dashboard.createcourse = async (title, detail, description, trainer, start_time, end_time, category, imageUrl, site, is_paid) => {
+  try {
+    const categoryResult = await db.query('SELECT id FROM categories WHERE category = $1', [category]);
+    const categoryId = categoryResult.rows[0].id;
+
+    const result = await db.query('INSERT INTO courses (title, detail, description, trainer, start_time, end_time, category_id, image, site, is_paid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', [title, detail, description, trainer, start_time, end_time, categoryId, imageUrl, site,is_paid]);
+
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 
     Dashboard.allcourses = async (page, pageSize, searchTerm, categoryFilter, isPaidFilter) => {
@@ -230,15 +248,18 @@ Dashboard.createcourse = async (title,detail,description,trainer,start_time,end_
 
   
 
-    Dashboard.updatecourse = async (courseID, title, detail, description, trainer, course_time, category_id, site) => {
+    Dashboard.updatecourse = async (courseID, title, detail, description, trainer, start_time,end_time, category_id, site) => {
       try {
-        const result = await db.query('UPDATE courses SET title=$2, detail=$3, description=$4, course_time=$5, trainer=$6, category_id=$7, site=$8 WHERE id=$1', [courseID, title, detail, description, course_time, trainer, category_id, site]);
-    
-        return result.rows;
-      } catch (err) {
-        throw err;
+        const result = await db.query('UPDATE courses SET title = $2, detail = $3, description = $4, trainer = $5, start_time = $6, end_time = $7, category_id = $8, site = $9 WHERE id = $1 RETURNING *',
+        [courseID, title, detail, description, trainer, start_time, end_time, category_id, site]);
+      
+      return result.rows[0];
+
+      } catch (error) {
+        throw error;
       }
-    };
+    }
+    
     
 
       Dashboard.deletecourse = async (courseID) => {

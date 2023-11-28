@@ -11,43 +11,44 @@ const videoupload = multer({ storage: storage }).single('video');
 
 const createcourse = async (req, res) => {
   try {
-    const {  role } = req.user;
+      const { role } = req.user;
 
-
-    if (role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
-    }
-    
-    upload(req, res, async function (err) {
-      if (err) {
-        return res.status(400).json({ success: false, error: err.message });
+      if (role !== 'admin') {
+          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
       }
 
-      const { title, detail, description, trainer, start_time,end_time, category_id, audince_id, site } = req.body;
-      const imageBuffer = req.file ? req.file.buffer : null;
+      upload(req, res, async function (err) {
+          if (err) {
+              return res.status(400).json({ success: false, error: err.message });
+          }
 
-      const imageUrl = await uploadImageToFirebase(imageBuffer);
-     await addToGoogleCalendar(title, start_time, end_time, description);
-      await Dashboard.createcourse(
-        title,
-        detail,
-        description,
-        trainer,
-        start_time,
-        end_time,
-        category_id,
-        imageUrl,
-        audince_id,
-        site
-      );
+          const { title, detail, description, trainer, start_time, end_time, category, is_paid, site } = req.body;
+          const imageBuffer = req.file ? req.file.buffer : null;
 
-      res.status(201).json({ success: true, message: 'Course added successfully' });
-    });
+          const imageUrl = await uploadImageToFirebase(imageBuffer);
+          await addToGoogleCalendar(title, start_time, end_time, description);
+
+          await Dashboard.createcourse(
+            title,
+            detail,
+            description,
+            trainer,
+            start_time,
+            end_time,
+            category,
+            imageUrl,
+            site,
+            is_paid 
+        );
+        
+          res.status(201).json({ success: true, message: 'Course added successfully' });
+      });
   } catch (err) {
-    console.error(err);
-    res.status(400).json({ success: false, error: 'Course added failed' });
+      console.error(err);
+      res.status(400).json({ success: false, error: 'Course added failed' });
   }
 };
+
 
 async function addToGoogleCalendar(title, startTime, endTime, description) {
   try {
@@ -68,11 +69,11 @@ async function addToGoogleCalendar(title, startTime, endTime, description) {
     summary: title,
     description: description,
     start: {
-      dateTime: new Date(`${startTime}T00:00:00`).toISOString(),
+      dateTime: new Date(`${startTime}`).toISOString(),
       timeZone: 'Jordan Time (GMT+03:00)',
     },
     end: {
-      dateTime: new Date(`${endTime}T23:59:59`).toISOString(),
+      dateTime: new Date(`${endTime}`).toISOString(),
       timeZone: 'Jordan Time (GMT+03:00)',
     },
   };
@@ -189,25 +190,31 @@ const allworkshops = async (req, res, next) => {
     }
   };
   
-const updatecourse = async(req,res) => {
- 
-  try{
-    const {  role } = req.user;
-
-   
-    if (role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+  const updatecourse = async (req, res) => {
+    try {
+      const { role } = req.user;
+      if (role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+      }
+  
+      const { title, detail, description, trainer, start_time, end_time, category_id, site } = req.body;
+      const courseID = req.params.id;
+  
+      console.log('Request Body:', req.body);
+  
+      await Dashboard.updatecourse(courseID, title, detail, description, trainer, start_time, end_time, category_id, site);
+  
+      console.log('Update Successful');
+  
+      res.status(200).json({ success: true, message: "course updated successfully" });
+    } catch (error) {
+      console.error('Error updating course:', error);
+      res.status(500).json({ success: false, error: 'Error updating course' });
     }
-    
-    const {title,detail,description,trainer,course_time,category_id,site } = req.body;
-    const courseID = req.params.id;
-    await Dashboard.updatecourse(courseID, title,detail,description,trainer,course_time,category_id,site);
-    res.status(200).json({success:true,message:"course updated successfully"});
+  };
+  
 
-  }catch{
-          res.status(500).json({ success: false, error: 'Error updating course' });
-  }
-}
+
 
 const deletecourse = async(req,res,next) =>{
   try{

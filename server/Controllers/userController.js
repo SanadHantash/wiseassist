@@ -12,53 +12,61 @@ function cont(req, res){
 };
 
 const register = async (req, res) => {
-    const { first_name, last_name, user_name, email, password, phonenumber, birthdate } = req.body;
-  
-   
-    const schema = Joi.object({
-      first_name: Joi.string().alphanum().min(3).max(10).required(),
-      last_name: Joi.string().alphanum().min(3).max(10).required(),
-      user_name: Joi.string().alphanum().min(3).max(30).required(),
-      email: Joi.string().required(),
-      password: Joi.string()
-        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#!$%&])[a-zA-Z\d@#!$%&]{8,}$/)
-        .required()
-        .messages({
-          'string.pattern.base':
-            'Invalid password format. Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one of @, #, !, $, %, or &.',
-        }),
-      phonenumber: Joi.string().pattern(/^[0-9]{10}$/).required().messages({
-        'string.pattern.base': 'Invalid phone number format. Please enter a 10-digit phone number.',
-      }),
-      birthdate: Joi.string().required(),
-    });
-  
-   
-    const { error } = schema.validate({ first_name, last_name, user_name, email, password, phonenumber, birthdate });
-  
-    if (error) {
-      return res.status(400).json({ success: false, error: error.message });
-    }
-  
-    try {
-        await User.checkUserExistence(email, user_name, phonenumber);
-      const hashedPassword = await bcrypt.hash(password, 10);
-     const user =  await User.register(first_name, last_name, user_name, email, hashedPassword, phonenumber, birthdate);
-      const token = jwt.sign({ userId: user.id, email: user.email,username:user.user_name,role:user.role }, process.env.SECRET_KEY, { expiresIn: '4h' });
-      res.cookie('token', token, { httpOnly: true });
-      res.status(201).json({ success: true, message: 'User added successfully',token });
-     
-    } catch (err) {
-        console.error(err);
-        if (err.message === 'Email already exists' || err.message === 'Username already exists' || err.message === 'Phonenumber already exists') {
-          res.status(400).json({ success: false, error: err.message });
-        } else {
+  const { first_name, last_name, user_name, email, password, phonenumber} = req.body;
 
-          res.status(500).json({ success: false, error: 'User registration failed' });
-        }
+ 
+  const schema = Joi.object({
+    first_name: Joi.string().alphanum().min(3).max(10).required(),
+    last_name: Joi.string().alphanum().min(3).max(10).required(),
+    user_name: Joi.string().alphanum().min(3).max(30).required(),
+    email: Joi.string()
+    .required()
+    .email({ tlds: { allow: false } }) 
+    .custom((value, helpers) => {
+      if (!value.endsWith('@gmail.com')) {
+        return helpers.error('any.custom', { message: 'Email must be a Gmail address' });
+      }return value;
+    }),
+    password: Joi.string()
+      .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#!$%&])[a-zA-Z\d@#!$%&]{8,}$/)
+      .required()
+      .messages({
+        'string.pattern.base':
+          'Invalid password format. Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one of @, #, !, $, %, or &.',
+      }),
+    phonenumber: Joi.string().pattern(/^[0-9]{10}$/).required().messages({
+      'string.pattern.base': 'Invalid phone number format. Please enter a 10-digit phone number.',
+    }),
+    //birthdate: Joi.string().required(),
+  });
+
+ 
+  const { error } = schema.validate({ first_name, last_name, user_name, email, password, phonenumber });
+
+  if (error) {
+    return res.status(400).json({ success: false, error: error.message });
+  }
+
+  try {
+      await User.checkUserExistence(email, user_name, phonenumber);
+    const hashedPassword = await bcrypt.hash(password, 10);
+   const user = await User.register(first_name, last_name, user_name, email, hashedPassword, phonenumber);
+   console.log(user);
+    const token = jwt.sign({ userId: user.id, email: user.email,username:user.user_name,role:user.role }, process.env.SECRET_KEY, { expiresIn: '4h' });
+    res.cookie('token', token);
+    console.log(token);
+    res.status(201).json({ success: true, message: 'User added successfully',token,user });
+  } catch (err) {
+      console.error(err);
+      if (err.message === 'invalid email' || err.message === 'invalid username' || err.message === 'invalid phonenumber') {
+        res.status(400).json({ success: false, error: err.message });
+      } else {
+
+        res.status(500).json({ success: false, error: 'User registration failed', });
       }
-  };
-  
+    }
+};
+
   const login = async (req, res) => {
     const { email } = req.body;
   

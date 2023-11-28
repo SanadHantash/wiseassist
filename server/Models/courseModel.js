@@ -521,7 +521,7 @@ Course.addcommenttocourse = async (courseID, userID, comment) => {
 
 Course.getcoursecomments = async (courseID) => {
   try {
-    const result = await db.query('SELECT course_reaction.id,  course_reaction.course_comment, users.user_name FROM course_reaction INNER JOIN users ON users.id = course_reaction.user_id   WHERE course_id = $1 AND course_reaction.is_deleted = false AND course_reaction.is_available = true', [courseID]);
+    const result = await db.query('SELECT course_reaction.id,course_reaction.course_comment, users.user_name FROM course_reaction INNER JOIN users ON users.id = course_reaction.user_id   WHERE course_id = $1 AND course_reaction.is_deleted = false AND course_reaction.is_available = true', [courseID]);
     return result.rows;
   } catch (error) {
     console.error(error.message);

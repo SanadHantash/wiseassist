@@ -8,33 +8,34 @@ User.checkUserExistence = async (email, user_name, phonenumber) => {
     const checkPhone = await db.query('SELECT * FROM users WHERE phonenumber = $1;', [phonenumber]);
 
     if (checkEmail.rows.length > 0) {
-    throw new Error("Email already exists");
+    throw new Error("invalid email");
     }
     if (checkUsername.rows.length > 0) {
-    throw new Error("Username already exists");
+    throw new Error("invalid username");
     }
     if (checkPhone.rows.length > 0) {
-    throw new Error("Phonenumber already exists");
+    throw new Error("invalid phonenumber");
     }
 
     return true; 
     };
-    User.register= async (first_name,last_name,user_name, email, hashPassword,phonenumber,birthdate)=>{
+    User.register= async (first_name,last_name,user_name, email, hashPassword,phonenumber)=>{
     
-        try {
-        
-            const result = await db.query('INSERT INTO users(first_name,last_name,user_name, email, password, phonenumber,birthdate) VALUES($1, $2, $3, $4, $5, $6,$7)', [first_name,last_name,user_name, email, hashPassword,phonenumber,birthdate]);
-            return result.rows;
-    
+      try {
+      
+          const result = await db.query('INSERT INTO users(first_name,last_name,user_name, email, password, phonenumber) VALUES($1, $2, $3, $4, $5, $6) RETURNING *', [first_name,last_name,user_name, email, hashPassword,phonenumber]);
+          console.log(result);
+          return result.rows[0];
+          
+  
 
-    } catch (err) {
-        throw err;
-    }
+  } catch (err) {
+      throw err;
+  }
 }
-
 User.login = async (email) => {
     try {
-      const user = await db.query('SELECT id, email,user_name,role is_deleted FROM users WHERE email = $1;', [email]);
+      const user = await db.query('SELECT users.id, email,user_name,roles.role, is_deleted FROM users inner join roles on roles.id = users.role_id WHERE email = $1;', [email]);
       if (user.rows[0]) {
         return user.rows[0];
       } else {
