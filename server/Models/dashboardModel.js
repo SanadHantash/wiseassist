@@ -289,11 +289,11 @@ Dashboard.createcourse = async (title, detail, description, trainer, start_time,
     };
 
 
-    Dashboard.alllessons = async (courseID,page,pageSize) => {
+    Dashboard.alllessons = async (courseID, page, pageSize) => {
       try {
         const offset = (page - 1) * pageSize;
-        const result = await db.query('SELECT lesson.id,lesson.title FROM lesson inner join courses on courses.id= lesson.course_id where courses.id=$1 and lesson.is_deleted = false LIMIT $1 OFFSET $2;',[courseID,pageSize, offset]);
-       return  result.rows
+        const result = await db.query('SELECT lesson.id, lesson.title FROM lesson INNER JOIN courses ON courses.id = lesson.course_id WHERE courses.id = $1 AND lesson.is_deleted = false LIMIT $2 OFFSET $3;', [courseID, pageSize, offset]);
+        return result.rows;
       } catch (err) {
         throw err;
       }
@@ -559,7 +559,7 @@ Dashboard.allusers = async (page, pageSize, searchTerm, roleFilter) => {
 Dashboard.countusers = async ()=>{
   try{
     const result = await db.query('select count(id) from users where is_deleted = false')
-    return result.rows
+    return result.rows[0].count;
   }catch (err) {
     throw err;
   }
@@ -568,33 +568,36 @@ Dashboard.countusers = async ()=>{
 
 Dashboard.countcourses = async ()=>{
   try{
-    const result = await db.query('select count(id) from courses where category_id = 1 or category_id = 2 where is_deleted = false')
-    return result.rows
+    const result = await db.query('select count(id) from courses where is_deleted = false and (courses.category_id = 1 or courses.category_id = 2 )')
+    return result.rows[0].count;
   }catch (err) {
     throw err;
   }
 }
-Dashboard.countworkshops = async ()=>{
+Dashboard.countworkshops = async () => {
+  try {
+    const result = await db.query('SELECT count(id) FROM courses WHERE is_deleted = false AND (courses.category_id = 3 OR courses.category_id = 4)');
+    return result.rows[0].count;
+  } catch (err) {
+    throw err;
+  }
+}
+
+
+Dashboard.counttechtips = async ()=>{
   try{
-    const result = await db.query('select count(id) from courses where category_id = 3 or category_id = 4 where is_deleted = false')
-    return result.rows
+    const result = await db.query('select count(id) from techtips where is_deleted = false ')
+    return result.rows[0].count
   }catch (err) {
     throw err;
   }
 }
 
-Dashboard.counttechtips = async ()=>{
-  try{
-    const result = await db.query('select count(id) from techtips where is_deleted = false ')
-    return result.rows
-  }catch (err) {
-    throw err;
-  }
-}
+
 Dashboard.countfaq = async ()=>{
   try{
     const result = await db.query('select count(id) from faq where is_deletedq = false and is_deleteda = false')
-    return result.rows
+    return result.rows[0].count
   }catch (err) {
     throw err;
   }
@@ -603,7 +606,7 @@ Dashboard.countfaq = async ()=>{
 Dashboard.countlessons = async (courseID)=>{
   try{
     const result = await db.query('select count(id) from lesson where course_id =$1 and is_deleted = false',[courseID])
-    return result.rows
+    return result.rows[0].count
   }catch (err) {
     throw err;
   }

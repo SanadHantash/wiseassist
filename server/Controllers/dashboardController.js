@@ -129,11 +129,13 @@ const allcourses = async (req, res, next) => {
     const searchTerm = req.query.search || ''; 
     const categoryFilter = req.query.category || ''; 
     const isPaidFilter = req.query.isPaid !== undefined ? req.query.isPaid === 'true' : undefined;
-    const course = await Dashboard.allcourses(page,pageSize,searchTerm,categoryFilter,isPaidFilter);
+    const course = await Dashboard.allcourses(page, pageSize, searchTerm, categoryFilter, isPaidFilter);
+    const totalCount = await Dashboard.countcourses(); 
+    const totalPages = Math.ceil(totalCount / pageSize);
+    console.log(totalCount, totalPages);
+    res.status(200).json({ course, totalCount, totalPages });
 
-  
-  
-    res.status(200).json(course); 
+
   } 
   catch (err) {
       console.error(err);
@@ -160,9 +162,11 @@ const allworkshops = async (req, res, next) => {
     const isPaidFilter = req.query.isPaid !== undefined ? req.query.isPaid === 'true' : undefined;
     const course = await Dashboard.allworkshops(page,pageSize,searchTerm, categoryFilter, isPaidFilter);
 
+    const totalCount = await Dashboard.countworkshops(); 
+    const totalPages = Math.ceil(totalCount / pageSize);
+    console.log(totalCount, totalPages);
   
-  
-    res.status(200).json(course); 
+    res.status(200).json({ course, totalCount, totalPages });
   } 
   catch (err) {
       console.error(err);
@@ -304,29 +308,27 @@ const uploadVideoToFirebase = async (videoBuffer) => {
 
 
 const alllessons = async (req, res, next) => {
-
   try {
     const { role } = req.user;
 
-   
     if (role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
-    
+
     const courseID = req.params.id;
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
-    const course = await Dashboard.alllessons(courseID,page,pageSize);
+    const lessons = await Dashboard.alllessons(courseID, page, pageSize);
+    const totalCount = await Dashboard.countlessons(courseID); 
+    const totalPages = Math.ceil(totalCount / pageSize);
+    console.log(totalCount, totalPages);
 
-  
-  
-    res.status(200).json(course); 
-  } 
-  catch (err) {
-      console.error(err);
-      res.status(400).json({ success: false, error: 'Error in getting lessons' });
-    }
-  };
+    res.status(200).json({ lessons, totalCount, totalPages });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ success: false, error: 'Error in getting lessons' });
+  }
+};
 
   const lessonpage = async (req, res) => {
     const {role } = req.user;
@@ -397,9 +399,13 @@ const alllessons = async (req, res, next) => {
       const pageSize = parseInt(req.query.pageSize) || 10;
       const course = await Dashboard.alltechtips(page,pageSize);
   
+      const totalCount = await Dashboard.counttechtips(); 
+      const totalPages = Math.ceil(totalCount / pageSize);
+      console.log(totalCount, totalPages);
+    
+      res.status(200).json({ course, totalCount, totalPages });
     
     
-      res.status(200).json(course); 
     } 
     catch (err) {
         console.error(err);
@@ -475,9 +481,13 @@ const alllessons = async (req, res, next) => {
         const pageSize = parseInt(req.query.pageSize) || 10;
         const question = await Dashboard.allquestions(page,pageSize);
 
+        const totalCount = await Dashboard.countfaq(); 
+        const totalPages = Math.ceil(totalCount / pageSize);
+        console.log(totalCount, totalPages);
+    
+        res.status(200).json({ question, totalCount, totalPages });
   
-  
-        res.status(200).json(question); 
+
       }
       catch (err) {
         console.error(err);
@@ -717,7 +727,10 @@ const alllessons = async (req, res, next) => {
       const searchTerm = req.query.search || ''; 
       const roleFilter = req.query.role || ''; 
       const users = await Dashboard.allusers(page, pageSize,searchTerm,roleFilter);
-      return res.status(200).json({succes: true,users})
+      const totalCount = await Dashboard.countusers(); 
+      const totalPages = Math.ceil(totalCount / pageSize);
+      console.log(totalCount, totalPages);
+      return res.status(200).json({succes: true,users,totalCount,totalPages})
     }catch (err) {
       console.error(err);
       res.status(500).json({ success: false, message: 'Internal server error' });
