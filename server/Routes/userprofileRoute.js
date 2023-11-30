@@ -17,6 +17,7 @@ router.post('/addtowhichlist/:id', middleware.authorize, userprofileController.a
 router.get('/mywhitchlist', middleware.authorize, userprofileController.witchlist);
 router.put('/mywhitchlist/:id/delete', middleware.authorize, userprofileController.deletefromwitchlist);
 router.put('/myprofile/updateinfo', middleware.authorize, userprofileController.updateinfo);
+router.put('/myprofile/updatepassword', middleware.authorize, userprofileController.updatepassword);
 
 
 module.exports = router;

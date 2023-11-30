@@ -343,4 +343,11 @@ Profile.mywatchedvideos = async (userID) => {
     }
 }
 
+
+Profile.updatepassword = async (userID,hashedPassword) =>{
+  const result  = await db.query('update users set password = $2 where id = $1',[userID,hashedPassword]);
+  return result.rows;
+}
+
+
 module.exports = Profile

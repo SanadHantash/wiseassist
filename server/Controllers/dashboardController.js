@@ -8,7 +8,6 @@ const { admin } = require('../firebase');
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage }).single('image');
 const videoupload = multer({ storage: storage }).single('video');
-
 const createcourse = async (req, res) => {
   try {
       const { role } = req.user;
@@ -52,10 +51,10 @@ const createcourse = async (req, res) => {
 
 async function addToGoogleCalendar(title, startTime, endTime, description) {
   try {
-    // Load credentials from the JSON file you downloaded when setting up the Google Calendar API
+    
     const credentials = require('../calendar.json');
 
-    // Set up the Google Calendar API
+
     const { client_email, private_key } = credentials;
     const auth = new google.auth.JWT({
       email: 'firebase-adminsdk-izm56@wiseassist-b8a8a.iam.gserviceaccount.com',
@@ -92,6 +91,8 @@ async function addToGoogleCalendar(title, startTime, endTime, description) {
   throw error; // Re-throw the error so that it can be caught in the calling function
   }
 }
+
+
 
 const uploadImageToFirebase = async (imageBuffer) => {
   const bucket = admin.storage().bucket(); 
@@ -205,6 +206,7 @@ const allworkshops = async (req, res, next) => {
       const courseID = req.params.id;
   
       console.log('Request Body:', req.body);
+      
   
       await Dashboard.updatecourse(courseID, title, detail, description, trainer, start_time, end_time, category_id, site);
   
@@ -224,7 +226,7 @@ const deletecourse = async(req,res,next) =>{
   try{
     const {  role } = req.user;
 
-   
+  
     if (role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
@@ -638,20 +640,25 @@ const alllessons = async (req, res, next) => {
 
 
     const login = async (req, res) => {
-      const { email } = req.body;
+      const { email, password } = req.body;
     
       try {
         const user = await Dashboard.login(email);
     
-        if (!user || typeof user === 'string') {
+        if (!user) {
+          return res.status(401).json({ success: false, message: 'Invalid email or password' });
+        }
+    
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+    
+        if (!isPasswordMatch) {
           return res.status(401).json({ success: false, message: 'Invalid email or password' });
         }
     
         const { id, role } = user;
     
         if (role !== 'admin') {
-          
-          return res.status(401).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+          return res.status(401).json({ success: false, message: 'Access denied. Only admins are allowed.' });
         }
     
         const token = jwt.sign({ userId: id, email, role }, process.env.SECRET_KEY, { expiresIn: '4h' });

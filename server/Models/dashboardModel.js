@@ -463,11 +463,11 @@ WHERE
 
     Dashboard.login = async (email) => {
       try {
-        const user = await db.query('SELECT users.id, email, roles.role  FROM users inner join roles on roles.id = users.role_id WHERE email = $1 And users.is_deleted= false;', [email]);
+        const user = await db.query('SELECT users.id, email, password, roles.role FROM users INNER JOIN roles ON roles.id = users.role_id WHERE email = $1 AND users.is_deleted = false;', [email]);
         if (user.rows[0]) {
           return user.rows[0];
         } else {
-          return "Email not found or user is denied to access.";
+            return "Email not found or user is denied to access.";; 
         }
       } catch (error) {
         throw error;

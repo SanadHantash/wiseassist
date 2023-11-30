@@ -68,14 +68,16 @@ const register = async (req, res) => {
 };
 
   const login = async (req, res) => {
-    const { email } = req.body;
+    const { email,password  } = req.body;
   
     try {
       const user = await User.login(email);
-      if (!user || user.is_deleted) {
+      const isPasswordMatch = await bcrypt.compare(password, user.password);
+      if (!user || user.is_deleted || !isPasswordMatch) {
         return res.status(401).json({ success: false, message: 'Invalid email or password' });
       }
-  
+      
+
       console.log(user.id);
       const token = jwt.sign({ userId: user.id,username:user.user_name, email: user.email,role:user.role }, process.env.SECRET_KEY, { expiresIn: '4h' });
       res.cookie('token', token, { httpOnly: true });
