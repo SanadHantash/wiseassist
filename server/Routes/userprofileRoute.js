@@ -20,5 +20,8 @@ router.put('/myprofile/updateinfo', middleware.authorize, userprofileController.
 router.put('/myprofile/updatepassword', middleware.authorize, userprofileController.updatepassword);
 
 
+
+
+
 module.exports = router;
 
