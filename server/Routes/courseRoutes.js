@@ -4,12 +4,12 @@ const app = express();
 const router = express.Router();
 const middleware = require('../middleware/authorization');
 
-router.get('/elderlies/allcourses', courseController.allelderliescourses);
+router.get('/elderlies/allcourses',courseController.allelderliescourses);
 router.get('/elderlies/allworkshops', courseController.allelderliesworkshops);
-router.get('/elderlies/onsite', courseController.onsiteelderliescourses);
-router.get('/elderlies/online', courseController.onlineelderliescourses);
-router.get('/elderlies/onsiteworkshop', courseController.onsiteworkshops);
-router.get('/elderlies/onlineworkshop', courseController.onlineworkshops);
+router.get('/elderlies/onsitecourses', courseController.onsiteelderliescourses);
+router.get('/elderlies/onlinecourses', courseController.onlineelderliescourses);
+router.get('/elderlies/onsiteworkshops', courseController.onsiteworkshops);
+router.get('/elderlies/onlineworkshops', courseController.onlineworkshops);
 router.get('/elderlies/detail/:id', courseController.detail);
 router.get('/course/:id/allessons', middleware.authorize,courseController.alllesons);
 router.get('/course/lesson/:id', courseController.lessonpage);

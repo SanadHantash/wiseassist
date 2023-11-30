@@ -21,21 +21,22 @@ User.checkUserExistence = async (email, user_name, phonenumber) => {
     };
     User.register= async (first_name,last_name,user_name, email, hashPassword,phonenumber)=>{
     
-      try {
-      
-          const result = await db.query('INSERT INTO users(first_name,last_name,user_name, email, password, phonenumber) VALUES($1, $2, $3, $4, $5, $6) RETURNING *', [first_name,last_name,user_name, email, hashPassword,phonenumber]);
-          console.log(result);
-          return result.rows[0];
-          
-  
+        try {
+        
+            const result = await db.query('INSERT INTO users(first_name,last_name,user_name, email, password, phonenumber) VALUES($1, $2, $3, $4, $5, $6) RETURNING *', [first_name,last_name,user_name, email, hashPassword,phonenumber]);
+            console.log(result);
+            return result.rows[0];
+            
+    
 
-  } catch (err) {
-      throw err;
-  }
+    } catch (err) {
+        throw err;
+    }
 }
+
 User.login = async (email) => {
     try {
-      const user = await db.query('SELECT users.id, email,user_name,password,roles.role, is_deleted FROM users inner join roles on roles.id = users.role_id WHERE email = $1;', [email]);
+      const user = await db.query('SELECT users.id, email,user_name,password, roles.role  FROM users inner join roles on roles.id = users.role_id WHERE email = $1 And users.is_deleted= false;', [email]);
       if (user.rows[0]) {
         return user.rows[0];
       } else {

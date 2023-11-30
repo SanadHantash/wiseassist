@@ -82,6 +82,8 @@ const allelderliesworkshops = async (req, res, next) => {
     }
   };
 
+  
+
   const detail = async (req, res) => {
     const courseId = req.params.id;
     try {

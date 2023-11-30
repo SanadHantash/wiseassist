@@ -8,46 +8,46 @@ const { admin } = require('../firebase');
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage }).single('image');
 const videoupload = multer({ storage: storage }).single('video');
+
 const createcourse = async (req, res) => {
   try {
-      const { role } = req.user;
+    const {  role } = req.user;
 
-      if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+    }
+    
+    upload(req, res, async function (err) {
+      if (err) {
+        return res.status(400).json({ success: false, error: err.message });
       }
 
-      upload(req, res, async function (err) {
-          if (err) {
-              return res.status(400).json({ success: false, error: err.message });
-          }
+      const { title, detail, description, trainer, start_time,end_time, category_id, audince_id, site } = req.body;
+      const imageBuffer = req.file ? req.file.buffer : null;
 
-          const { title, detail, description, trainer, start_time, end_time, category, is_paid, site } = req.body;
-          const imageBuffer = req.file ? req.file.buffer : null;
+      const imageUrl = await uploadImageToFirebase(imageBuffer);
+     await addToGoogleCalendar(title, start_time, end_time, description);
+      await Dashboard.createcourse(
+        title,
+        detail,
+        description,
+        trainer,
+        start_time,
+        end_time,
+        category_id,
+        imageUrl,
+        audince_id,
+        site
+      );
 
-          const imageUrl = await uploadImageToFirebase(imageBuffer);
-          await addToGoogleCalendar(title, start_time, end_time, description);
-
-          await Dashboard.createcourse(
-            title,
-            detail,
-            description,
-            trainer,
-            start_time,
-            end_time,
-            category,
-            imageUrl,
-            site,
-            is_paid 
-        );
-        
-          res.status(201).json({ success: true, message: 'Course added successfully' });
-      });
+      res.status(201).json({ success: true, message: 'Course added successfully' });
+    });
   } catch (err) {
-      console.error(err);
-      res.status(400).json({ success: false, error: 'Course added failed' });
+    console.error(err);
+    res.status(400).json({ success: false, error: 'Course added failed' });
   }
 };
-
 
 async function addToGoogleCalendar(title, startTime, endTime, description) {
   try {
@@ -63,24 +63,24 @@ async function addToGoogleCalendar(title, startTime, endTime, description) {
   });
   const calendar = google.calendar({ version: 'v3', auth });
 
-  // Create an event
+
   const event = {
     summary: title,
     description: description,
     start: {
-      dateTime: new Date(`${startTime}`).toISOString(),
+      dateTime: new Date(`${startTime}T00:00:00`).toISOString(),
       timeZone: 'Jordan Time (GMT+03:00)',
     },
     end: {
-      dateTime: new Date(`${endTime}`).toISOString(),
+      dateTime: new Date(`${endTime}T23:59:59`).toISOString(),
       timeZone: 'Jordan Time (GMT+03:00)',
     },
   };
 
   console.log(event);
-  // Insert the event
+
   const result = await calendar.events.insert({
-    calendarId: process.env.CALENDAR_ID, // You can use the primary calendar or a specific calendar ID
+    calendarId: process.env.CALENDAR_ID, 
     resource: event,
   });
   
@@ -88,11 +88,9 @@ async function addToGoogleCalendar(title, startTime, endTime, description) {
   console.log('Event added to Google Calendar:', result.data);
 } catch (error) {
   console.error('Error adding event to Google Calendar:', error.message);
-  throw error; // Re-throw the error so that it can be caught in the calling function
+  throw error; 
   }
 }
-
-
 
 const uploadImageToFirebase = async (imageBuffer) => {
   const bucket = admin.storage().bucket(); 
@@ -130,13 +128,11 @@ const allcourses = async (req, res, next) => {
     const searchTerm = req.query.search || ''; 
     const categoryFilter = req.query.category || ''; 
     const isPaidFilter = req.query.isPaid !== undefined ? req.query.isPaid === 'true' : undefined;
-    const course = await Dashboard.allcourses(page, pageSize, searchTerm, categoryFilter, isPaidFilter);
-    const totalCount = await Dashboard.countcourses(); 
-    const totalPages = Math.ceil(totalCount / pageSize);
-    console.log(totalCount, totalPages);
-    res.status(200).json({ course, totalCount, totalPages });
+    const course = await Dashboard.allcourses(page,pageSize,searchTerm,categoryFilter,isPaidFilter);
 
-
+  
+  
+    res.status(200).json(course); 
   } 
   catch (err) {
       console.error(err);
@@ -163,11 +159,9 @@ const allworkshops = async (req, res, next) => {
     const isPaidFilter = req.query.isPaid !== undefined ? req.query.isPaid === 'true' : undefined;
     const course = await Dashboard.allworkshops(page,pageSize,searchTerm, categoryFilter, isPaidFilter);
 
-    const totalCount = await Dashboard.countworkshops(); 
-    const totalPages = Math.ceil(totalCount / pageSize);
-    console.log(totalCount, totalPages);
   
-    res.status(200).json({ course, totalCount, totalPages });
+  
+    res.status(200).json(course); 
   } 
   catch (err) {
       console.error(err);
@@ -195,38 +189,31 @@ const allworkshops = async (req, res, next) => {
     }
   };
   
-  const updatecourse = async (req, res) => {
-    try {
-      const { role } = req.user;
-      if (role !== 'admin') {
-        return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
-      }
-  
-      const { title, detail, description, trainer, start_time, end_time, category_id, site } = req.body;
-      const courseID = req.params.id;
-  
-      console.log('Request Body:', req.body);
-      
-  
-      await Dashboard.updatecourse(courseID, title, detail, description, trainer, start_time, end_time, category_id, site);
-  
-      console.log('Update Successful');
-  
-      res.status(200).json({ success: true, message: "course updated successfully" });
-    } catch (error) {
-      console.error('Error updating course:', error);
-      res.status(500).json({ success: false, error: 'Error updating course' });
+const updatecourse = async(req,res) => {
+ 
+  try{
+    const {  role } = req.user;
+
+   
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
-  };
-  
+    
+    const {title,detail,description,trainer,start_time,end_time,category_id,site } = req.body;
+    const courseID = req.params.id;
+    await Dashboard.updatecourse(courseID, title,detail,description,trainer,start_time,end_time,category_id,site);
+    res.status(200).json({success:true,message:"course updated successfully"});
 
-
+  }catch{
+          res.status(500).json({ success: false, error: 'Error updating course' });
+  }
+}
 
 const deletecourse = async(req,res,next) =>{
   try{
     const {  role } = req.user;
 
-  
+   
     if (role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
@@ -310,27 +297,29 @@ const uploadVideoToFirebase = async (videoBuffer) => {
 
 
 const alllessons = async (req, res, next) => {
+
   try {
     const { role } = req.user;
 
+   
     if (role !== 'admin') {
       return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
     }
-
+    
     const courseID = req.params.id;
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
-    const lessons = await Dashboard.alllessons(courseID, page, pageSize);
-    const totalCount = await Dashboard.countlessons(courseID); 
-    const totalPages = Math.ceil(totalCount / pageSize);
-    console.log(totalCount, totalPages);
+    const course = await Dashboard.alllessons(courseID,page,pageSize);
 
-    res.status(200).json({ lessons, totalCount, totalPages });
-  } catch (err) {
-    console.error(err);
-    res.status(400).json({ success: false, error: 'Error in getting lessons' });
-  }
-};
+  
+  
+    res.status(200).json(course); 
+  } 
+  catch (err) {
+      console.error(err);
+      res.status(400).json({ success: false, error: 'Error in getting lessons' });
+    }
+  };
 
   const lessonpage = async (req, res) => {
     const {role } = req.user;
@@ -401,13 +390,9 @@ const alllessons = async (req, res, next) => {
       const pageSize = parseInt(req.query.pageSize) || 10;
       const course = await Dashboard.alltechtips(page,pageSize);
   
-      const totalCount = await Dashboard.counttechtips(); 
-      const totalPages = Math.ceil(totalCount / pageSize);
-      console.log(totalCount, totalPages);
-    
-      res.status(200).json({ course, totalCount, totalPages });
     
     
+      res.status(200).json(course); 
     } 
     catch (err) {
         console.error(err);
@@ -483,13 +468,9 @@ const alllessons = async (req, res, next) => {
         const pageSize = parseInt(req.query.pageSize) || 10;
         const question = await Dashboard.allquestions(page,pageSize);
 
-        const totalCount = await Dashboard.countfaq(); 
-        const totalPages = Math.ceil(totalCount / pageSize);
-        console.log(totalCount, totalPages);
-    
-        res.status(200).json({ question, totalCount, totalPages });
   
-
+  
+        res.status(200).json(question); 
       }
       catch (err) {
         console.error(err);
@@ -569,73 +550,9 @@ const alllessons = async (req, res, next) => {
       }
     }
 
-    const acceptcoursecomment = async(req,res) =>{
-      
-      try {
-        const {role } = req.user;
+ 
 
-   
-        if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
-        }
-
-        
-        const courseID = req.params.id;
-        await Dashboard.acceptcoursecomment(courseID);
-        res.status(200).json({ success: true ,message:'comment accepted successfully'});
-      } 
-      
-      catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false ,error:'error accept comment'});
-      }
-    };
-
-
-    const acceptlessoncomment = async(req,res) =>{
-      
-      try {
-        const {role } = req.user;
-
-   
-        if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
-        }
-
-        
-        const lessonID = req.params.id;
-        await Dashboard.acceptlessoncomment(lessonID);
-        res.status(200).json({ success: true ,message:'comment accepted successfully'});
-      } 
-      
-      catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false ,error:'error accept comment'});
-      }
-    };
-
-
-    const accepttechtipcomment = async(req,res) =>{
-      
-      try {
-        const {role } = req.user;
-
-   
-        if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
-        }
-
-        
-        const techID = req.params.id;
-        await Dashboard.accepttechtipcomment(techID);
-        res.status(200).json({ success: true ,message:'comment accepted successfully'});
-      } 
-      
-      catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false ,error:'error accept comment'});
-      }
-    };
+    
 
 
 
@@ -734,10 +651,7 @@ const alllessons = async (req, res, next) => {
       const searchTerm = req.query.search || ''; 
       const roleFilter = req.query.role || ''; 
       const users = await Dashboard.allusers(page, pageSize,searchTerm,roleFilter);
-      const totalCount = await Dashboard.countusers(); 
-      const totalPages = Math.ceil(totalCount / pageSize);
-      console.log(totalCount, totalPages);
-      return res.status(200).json({succes: true,users,totalCount,totalPages})
+      return res.status(200).json({succes: true,users})
     }catch (err) {
       console.error(err);
       res.status(500).json({ success: false, message: 'Internal server error' });
@@ -1039,9 +953,6 @@ module.exports = {
     addanswer,
     updateanswer,
     deleteanswer,
-    accepttechtipcomment,
-    acceptcoursecomment,
-    acceptlessoncomment,
     login,
     sendmessagetouser,
     chatbox,

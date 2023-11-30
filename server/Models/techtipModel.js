@@ -77,7 +77,7 @@ Techtip.addcomment = async (techtipID, userID, comment) => {
 
 Techtip.getcomments = async (techtipID) => {
     try {
-      const result = await db.query('SELECT techtip_comment.id,  techtip_comment.comment, users.user_name FROM techtip_comment INNER JOIN users ON users.id = techtip_comment.user_id   WHERE techtip_id = $1 AND techtip_comment.is_deleted = false AND techtip_comment.is_available = true', [techtipID]);
+      const result = await db.query('SELECT techtip_comment.id,  techtip_comment.comment, users.user_name FROM techtip_comment INNER JOIN users ON users.id = techtip_comment.user_id   WHERE techtip_id = $1 AND techtip_comment.is_deleted = false', [techtipID]);
       return result.rows;
     } catch (error) {
       console.error(error.message);

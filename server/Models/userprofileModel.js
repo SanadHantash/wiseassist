@@ -124,7 +124,7 @@ Profile.getwitchlist = async (userID) => {
             SELECT witchlist.id, witchlist.created_at, courses.title
             FROM witchlist
             INNER JOIN courses ON courses.id = witchlist.course_id
-            WHERE witchlist.user_id = $1
+            WHERE witchlist.user_id = $1 and courses.is_deleted = false
             ORDER BY created_at DESC;
         `, [userID]);
 
@@ -289,7 +289,7 @@ Profile.mywatchedvideos = async (userID) => {
       watched_videos
       INNER JOIN lesson ON lesson.id = watched_videos.lesson_id
     WHERE 
-      watched_videos.user_id = $1;
+      watched_videos.user_id = $1 and lesson.is_deleted = false;
       `, [userID]);
       const formattedResult = await Promise.all(
         queryResult.rows.map(async (row) => {

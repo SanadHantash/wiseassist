@@ -14,7 +14,6 @@ FAQ.addquestion = async(userID,question) =>{
 
 FAQ.updatetequestion = async (faqID,userID) => {
     try {
-
         const result = await db.query('UPDATE faq SET question=$2 WHERE id=$1', [faqID,userID]);
         return result.rows;
         } catch (err) {

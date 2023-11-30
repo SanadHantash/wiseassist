@@ -3,28 +3,10 @@ const jwt = require('jsonwebtoken');
 const { admin, storage } = require('../firebase');
 const Dashboard = {};
 
-Dashboard.getCourseById = async (courseID) => {
-  try {
-    const result = await db.query('SELECT courses.id,courses.title,courses.description,courses.detail,courses.image,courses.start_time,courses.end_time,courses.trainer,courses.is_paid,courses.site FROM courses WHERE courses.id = $1', [courseID]);
-    return result.rows[0]; // Return the first (and only) element of the array
-  } catch (error) {
-    throw error;
-  }
-}
-
-Dashboard.createcourse = async (title, detail, description, trainer, start_time, end_time, category, imageUrl, site, is_paid) => {
-  try {
-    const categoryResult = await db.query('SELECT id FROM categories WHERE category = $1', [category]);
-    const categoryId = categoryResult.rows[0].id;
-
-    const result = await db.query('INSERT INTO courses (title, detail, description, trainer, start_time, end_time, category_id, image, site, is_paid) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *', [title, detail, description, trainer, start_time, end_time, categoryId, imageUrl, site,is_paid]);
-
-    return result.rows[0];
-  } catch (error) {
-    throw error;
-  }
-};
-
+Dashboard.createcourse = async (title,detail,description,trainer,start_time,end_time,category_id,imageUrl,audince_id,site) => {
+        const result = await db.query('INSERT INTO courses (title,detail,description,trainer,start_time,end_time,category_id,image,audince_id,site)  VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10)', [title,detail,description,trainer,start_time,end_time,category_id,imageUrl,audince_id,site]);
+        return result.rows;
+    };
 
 
     Dashboard.allcourses = async (page, pageSize, searchTerm, categoryFilter, isPaidFilter) => {
@@ -250,16 +232,13 @@ Dashboard.createcourse = async (title, detail, description, trainer, start_time,
 
     Dashboard.updatecourse = async (courseID, title, detail, description, trainer, start_time,end_time, category_id, site) => {
       try {
-        const result = await db.query('UPDATE courses SET title = $2, detail = $3, description = $4, trainer = $5, start_time = $6, end_time = $7, category_id = $8, site = $9 WHERE id = $1 RETURNING *',
-        [courseID, title, detail, description, trainer, start_time, end_time, category_id, site]);
-      
-      return result.rows[0];
-
-      } catch (error) {
-        throw error;
-      }
-    }
+        const result = await db.query('UPDATE courses SET title=$2, detail=$3, description=$4, start_time=$5,end_time=$6, trainer=$7, category_id=$8, site=$9 WHERE id=$1', [courseID, title, detail, description, start_time,end_time, trainer, category_id, site]);
     
+        return result.rows;
+      } catch (err) {
+        throw err;
+      }
+    };
     
 
       Dashboard.deletecourse = async (courseID) => {
@@ -289,11 +268,11 @@ Dashboard.createcourse = async (title, detail, description, trainer, start_time,
     };
 
 
-    Dashboard.alllessons = async (courseID, page, pageSize) => {
+    Dashboard.alllessons = async (courseID,page,pageSize) => {
       try {
         const offset = (page - 1) * pageSize;
-        const result = await db.query('SELECT lesson.id, lesson.title FROM lesson INNER JOIN courses ON courses.id = lesson.course_id WHERE courses.id = $1 AND lesson.is_deleted = false LIMIT $2 OFFSET $3;', [courseID, pageSize, offset]);
-        return result.rows;
+        const result = await db.query('SELECT lesson.id,lesson.title FROM lesson inner join courses on courses.id= lesson.course_id where courses.id=$1 and lesson.is_deleted = false LIMIT $1 OFFSET $2;',[courseID,pageSize, offset]);
+       return  result.rows
       } catch (err) {
         throw err;
       }
@@ -451,23 +430,15 @@ WHERE
     }
     
 
-    Dashboard.accepttechtipcomment = async (techID) => {
-      try {
-        const result = await db.query('UPDATE techtip_comment SET is_available = TRUE  WHERE techtip_comment.id = $1 RETURNING * ', [techID]);
-        return result.rows;
-      } catch (err) {
-        throw err;
-      }
-    }
-
+  
 
     Dashboard.login = async (email) => {
       try {
-        const user = await db.query('SELECT users.id, email, password, roles.role FROM users INNER JOIN roles ON roles.id = users.role_id WHERE email = $1 AND users.is_deleted = false;', [email]);
+        const user = await db.query('SELECT users.id, email,password, roles.role  FROM users inner join roles on roles.id = users.role_id WHERE email = $1 And users.is_deleted= false;', [email]);
         if (user.rows[0]) {
           return user.rows[0];
         } else {
-            return "Email not found or user is denied to access.";; 
+          return "Email not found or user is denied to access.";
         }
       } catch (error) {
         throw error;
@@ -507,23 +478,6 @@ Dashboard.getsentmessages = async (senderID,reciverID) => {
 };
 
 
-Dashboard.acceptcoursecomment = async (courseID) => {
-  try {
-    const result = await db.query('UPDATE course_reaction SET is_available = TRUE  WHERE course_reaction.id = $1 RETURNING * ', [courseID]);
-    return result.rows;
-  } catch (err) {
-    throw err;
-  }
-}
-
-Dashboard.acceptlessoncomment = async (lessonID) => {
-  try {
-    const result = await db.query('UPDATE lesson_reaction SET is_available = TRUE  WHERE lesson_reaction.id = $1 RETURNING * ', [lessonID]);
-    return result.rows;
-  } catch (err) {
-    throw err;
-  }
-}
 
 
 Dashboard.allusers = async (page, pageSize, searchTerm, roleFilter) => {
@@ -559,7 +513,7 @@ Dashboard.allusers = async (page, pageSize, searchTerm, roleFilter) => {
 Dashboard.countusers = async ()=>{
   try{
     const result = await db.query('select count(id) from users where is_deleted = false')
-    return result.rows[0].count;
+    return result.rows
   }catch (err) {
     throw err;
   }
@@ -568,36 +522,33 @@ Dashboard.countusers = async ()=>{
 
 Dashboard.countcourses = async ()=>{
   try{
-    const result = await db.query('select count(id) from courses where is_deleted = false and (courses.category_id = 1 or courses.category_id = 2 )')
-    return result.rows[0].count;
+    const result = await db.query('select count(id) from courses where category_id = 1 or category_id = 2 where is_deleted = false')
+    return result.rows
   }catch (err) {
     throw err;
   }
 }
-Dashboard.countworkshops = async () => {
-  try {
-    const result = await db.query('SELECT count(id) FROM courses WHERE is_deleted = false AND (courses.category_id = 3 OR courses.category_id = 4)');
-    return result.rows[0].count;
-  } catch (err) {
+Dashboard.countworkshops = async ()=>{
+  try{
+    const result = await db.query('select count(id) from courses where category_id = 3 or category_id = 4 where is_deleted = false')
+    return result.rows
+  }catch (err) {
     throw err;
   }
 }
-
 
 Dashboard.counttechtips = async ()=>{
   try{
     const result = await db.query('select count(id) from techtips where is_deleted = false ')
-    return result.rows[0].count
+    return result.rows
   }catch (err) {
     throw err;
   }
 }
-
-
 Dashboard.countfaq = async ()=>{
   try{
     const result = await db.query('select count(id) from faq where is_deletedq = false and is_deleteda = false')
-    return result.rows[0].count
+    return result.rows
   }catch (err) {
     throw err;
   }
@@ -606,7 +557,7 @@ Dashboard.countfaq = async ()=>{
 Dashboard.countlessons = async (courseID)=>{
   try{
     const result = await db.query('select count(id) from lesson where course_id =$1 and is_deleted = false',[courseID])
-    return result.rows[0].count
+    return result.rows
   }catch (err) {
     throw err;
   }
@@ -737,8 +688,7 @@ Dashboard.mostenrolledworkshop = async()=>{
 }
 
 
-
-Dashboard.mostviewedvideo = async()=>{
+Dashboard.mostviewedvideo = async(courseID)=>{
   try{
 
     const result = await db.query('SELECT lesson_id,lesson.title FROM watched_videos inner join lesson on lesson.id = watched_videos.lesson_id where lesson.is_deleted = false GROUP BY lesson_id , lesson.title ORDER BY COUNT(lesson_id) DESC LIMIT 1');
