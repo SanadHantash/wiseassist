@@ -65,4 +65,38 @@ User.findbyid = async (userID) => {
       throw err;
     }
   };
+
+
+  User.storecode = async (email,code) =>{
+      try{
+            const result = await db.query('insert into codes (email,code) values ($1,$2)',[email,code])
+            return result.rows
+      }catch (err) {
+      throw err;
+    }
+  }
+
+
+  User.getcode = async (code) => {
+    try {
+        const result = await db.query('SELECT id, code, email FROM codes WHERE code = $1', [code]);
+        return result.rows[0]; 
+    } catch (err) {
+        throw err;
+    }
+};
+
+User.resetpassword = async (email, hashedPassword) => {
+  try {
+    const result = await db.query('UPDATE users SET password = $2 WHERE email = $1 RETURNING *', [email, hashedPassword]);
+
+    if (result.rows.length === 0) {
+      throw new Error('User not found or password not updated');
+    }
+  } catch (err) {
+    throw err;
+  }
+};
+
+
 module.exports = User;

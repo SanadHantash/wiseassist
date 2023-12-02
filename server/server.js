@@ -17,6 +17,7 @@ const userprofileRoute = require("./Routes/userprofileRoute");
 const techtipRoute = require("./Routes/techtipRoute");
 const faqRoute = require("./Routes/faqRoute");
 const chatRoute = require("./Routes/chatRoute")
+const chatbotRoute = require("./Routes/chatbotRoute")
 const homeRoute = require("./Routes/homeRoute")
 app.use(session({ secret: "cats", resave: true, saveUninitialized: true }));
 
@@ -37,6 +38,7 @@ app.use(userprofileRoute);
 app.use(techtipRoute);
 app.use(faqRoute);
 app.use(chatRoute);
+app.use(chatbotRoute);
 app.use(homeRoute);
 
 

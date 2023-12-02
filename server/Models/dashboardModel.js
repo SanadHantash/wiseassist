@@ -3,6 +3,23 @@ const jwt = require('jsonwebtoken');
 const { admin, storage } = require('../firebase');
 const Dashboard = {};
 
+
+
+
+Dashboard.getCalendarEventId =async(courseID) =>{
+  try {
+    
+    const query = 'SELECT calendarEventId FROM courses WHERE courseID = ?';
+    const [result] = await db.query(query, [courseID]);
+
+    
+    return result && result.length > 0 ? result[0].calendarEventId : null;
+  } catch (error) {
+    console.error('Error retrieving calendar event ID:', error.message);
+    throw error;
+  }
+}
+
 Dashboard.createcourse = async (title,detail,description,trainer,start_time,end_time,category_id,imageUrl,audince_id,site) => {
         const result = await db.query('INSERT INTO courses (title,detail,description,trainer,start_time,end_time,category_id,image,audince_id,site)  VALUES ($1, $2, $3,$4,$5,$6,$7,$8,$9,$10)', [title,detail,description,trainer,start_time,end_time,category_id,imageUrl,audince_id,site]);
         return result.rows;

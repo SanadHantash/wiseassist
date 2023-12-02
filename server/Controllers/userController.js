@@ -2,6 +2,7 @@ const User = require('../Models/userModel');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const Joi = require('joi');
+const nodemailer = require("nodemailer")
 require('dotenv').config();
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
@@ -136,10 +137,92 @@ const register = async (req, res) => {
 
 
 
+  const forgetpassword = async (req, res) => {
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: 'wiseassist5@gmail.com',
+            pass: 'sxcpifvtmimfntlh',
+        },
+    });
+
+    const { email } = req.body;
+    const user = await User.login(email);
+
+    if (!user || user.is_deleted) {
+        return res.status(401).json({ success: false, message: 'Invalid email or user not found' });
+    }
+
+    const code = Math.floor(100000 + Math.random() * 900000);
+
+    await User.storecode(email, code);
+
+    await transporter.sendMail({
+        from: 'wiseassist5@gmail.com',
+        to: [email],
+        subject: 'Password Reset',
+        text: `Your password reset code is: ${code}`,
+    });
+
+    res.json({ success: true, message: 'Password reset email sent successfully' });
+};
+
+
+const verifycode = async (req, res) => {
+  const { code } = req.body;
+
+  try {
+      const storedCode = await User.getcode(code);
+
+      if (!storedCode) {
+          return res.status(401).json({ success: false, message: 'Invalid or expired code' });
+      }
+
+      const email = storedCode.email;
+
+      res.json({ success: true, message: 'Code verification successful', email });
+  } catch (err) {
+      console.error(err);
+      res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
+
+const resetpassword = async (req, res) => {
+  try {
+    const schema = Joi.object({
+      password: Joi.string()
+        .pattern(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#!$%&])[a-zA-Z\d@#!$%&]{8,}$/)
+        .required()
+        .messages({
+          'string.pattern.base':
+            'Invalid password format. Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one of @, #, !, $, %, or &.',
+        }),
+    });
+
+    const { error } = schema.validate({ password: req.body.password });
+    if (error) {
+      return res.status(400).json({ success: false, error: error.message });
+    }
+
+    const { email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    await User.resetpassword(email, hashedPassword);
+
+    res.json({ success: true, message: 'Password reset successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
     register,
     login,
     cont,
-    createCheckoutSession
+    createCheckoutSession,
+    forgetpassword,
+    verifycode,
+    resetpassword
 };
 
