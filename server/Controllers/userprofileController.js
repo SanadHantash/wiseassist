@@ -201,7 +201,7 @@ const mywatchedvideos = async (req, res) => {
 const updateinfo = async (req, res) => {
   const userID = req.user.userId
 
-  const { first_name, last_name, user_name, email, password, phonenumber } = req.body;
+  const { first_name, last_name, user_name, email, phonenumber } = req.body;
 
  
   const schema = Joi.object({
@@ -219,7 +219,6 @@ const updateinfo = async (req, res) => {
     phonenumber: Joi.string().pattern(/^[0-9]{10}$/).required().messages({
       'string.pattern.base': 'Invalid phone number format. Please enter a 10-digit phone number.',
     }),
-    //birthdate: Joi.string().required(),
   });
 
  
@@ -230,7 +229,9 @@ const updateinfo = async (req, res) => {
   }
 
   try {
+    if (email || user_name || phonenumber) {
       await Profile.checkUserExistence(email, user_name, phonenumber);
+    }
   
     await Profile.updateinfo(userID,first_name, last_name, user_name, email, phonenumber);
   

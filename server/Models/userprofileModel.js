@@ -312,23 +312,30 @@ Profile.mywatchedvideos = async (userID) => {
     } 
   
 
-    Profile.checkUserExistence = async (email, user_name, phonenumber) => {
-      const checkEmail = await db.query('SELECT * FROM users WHERE email = $1;', [email]);
-      const checkUsername = await db.query('SELECT * FROM users WHERE user_name = $1;', [user_name]);
-      const checkPhone = await db.query('SELECT * FROM users WHERE phonenumber = $1;', [phonenumber]);
-  
-      if (checkEmail.rows.length > 0) {
-      throw new Error("invalid email");
+    Profile.checkUserExistence = async (email, user_name, phonenumber, userID) => {
+      if (email) {
+        const checkEmail = await db.query('SELECT * FROM users WHERE email = $1 AND id <> $2;', [email, userID]);
+        if (checkEmail.rows.length > 0) {
+          throw new Error("invalid email");
+        }
       }
-      if (checkUsername.rows.length > 0) {
-      throw new Error("invalid username");
+    
+      if (user_name) {
+        const checkUsername = await db.query('SELECT * FROM users WHERE user_name = $1 AND id <> $2;', [user_name, userID]);
+        if (checkUsername.rows.length > 0) {
+          throw new Error("invalid username");
+        }
       }
-      if (checkPhone.rows.length > 0) {
-      throw new Error("invalid phonenumber");
+    
+      if (phonenumber) {
+        const checkPhone = await db.query('SELECT * FROM users WHERE phonenumber = $1 AND id <> $2;', [phonenumber, userID]);
+        if (checkPhone.rows.length > 0) {
+          throw new Error("invalid phonenumber");
+        }
       }
-  
-      return true; 
-      };
+    
+      return true;
+    };
 
       Profile.updateinfo= async (userID,first_name,last_name,user_name, email,phonenumber)=>{
     
