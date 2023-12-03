@@ -18,6 +18,7 @@ router.get('/mywhitchlist', middleware.authorize, userprofileController.witchlis
 router.put('/mywhitchlist/:id/delete', middleware.authorize, userprofileController.deletefromwitchlist);
 router.put('/myprofile/updateinfo', middleware.authorize, userprofileController.updateinfo);
 router.put('/myprofile/updatepassword', middleware.authorize, userprofileController.updatepassword);
+router.put('/myprofile/unrolled/:id', middleware.authorize, userprofileController.unrolled);
 
 
 

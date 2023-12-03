@@ -51,44 +51,40 @@ const createcourse = async (req, res) => {
 
 async function addToGoogleCalendar(title, startTime, endTime, description) {
   try {
-    
-    const credentials = require('../calendar.json');
-
+    const credentials = require("../calendar.json");
 
     const { client_email, private_key } = credentials;
     const auth = new google.auth.JWT({
-      email: 'firebase-adminsdk-izm56@wiseassist-b8a8a.iam.gserviceaccount.com',
-      key: '-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC7ajpoUTBeb62/\nnbQFAp90B6zT0h+jJO5k+deXpPrj1pTPonBIQ6jDgcR5N5KI2pYZXsLy9JtWFH+M\n16FnwzlIpOFKAF8/hbnHcJynwLAOOqo4iwi4tH/de8X9p61VDVkJGn0b4pfi789g\nI6R1hVpP/Un4rCDqpXQsN6MJM/NRhQ6s7vitNCD0vtFPECgpSB3leUpdOCacTPgI\n8aBP43st1D2ODdvLQJOeJdK363/evgzyAoofofQ5spii2mn/9Y6riGD4lUgTmhL1\ndfdD5Sob8utq6bsuz/dOPlufZqOMsvVQs9nVbILmeSyYcjCpzlKLW/6XHkwncnBB\nmdevNGu5AgMBAAECgf9EDYQSnRM94g+VT2PZmI+N8mYvWagN9ZBwhMhkUuPyF4Ox\ntv+j6Jg/Zb+SGeZ7teO1vVMiJZrCMcSfFS2RdVziTqdVLQ1pDjCHhbyyAqXrL3eK\npfG6ICYjUUPI949ZHZ+sTpIKA3MOVJtYrZiU6Uysqayn6i40W3VJGRV6d1gYdo26\n9fRTEG9v59fBGZ026LwWT7luPH4hblmiqel/TTIrFFut7eRGXPOfKcNtFj7AxBIC\nd/klsId7mW4TDB07kItCVOQb2DDrqK0A1g9L5+fYsnlTyJ+8AjjgIGc4gFXojsbi\n71B3ZIuCOvCRVBfCjIur9Hj2fBn1Ilkoob1ANdECgYEA8uyOWpc6L0oITDN6NRGX\nckF1CCZjnfyeAuw7Uy5KuJO633e2thp6JwSqxZ/TEx4QazVOwUjmyWaIIiS7wNH2\nkGeGN/e7L70Vhdp1PnFg/49ibrVjazAJYcyUKPV5a14CT4J/XRtAiekdDu1jyOTA\n7hDNokXdlzSrCdo7KjQ4/1ECgYEAxYDEoINkvw9TLn4Uw0t93OCXMdPMI43gz4WN\nb3TGAw7XUMCFieBEXblojI+6x2Jw1/EmHpRrDA6YSUNRNCuNjM68UyozWHCiWXtb\nbYb+KLTmz/Kp50vdTwbX5x87NP0RrApwD8Kqny9R7kKzivugHYf6267jlcgEosHY\nXFVem+kCgYBxi+LKM0+uFPOl8pXXwl5AuJnkclUz3oVZJmRgcA3bEqpRk9piaiPY\noxTThO4bTH0uL1+ddt7xGqzdEMB1025ldw5EkNX87WvnAgK1ajeFnNbMmppa2rw3\n63EBaCQV7H41/fBca8WR8NV1Sb7PgyUu4cnMZM27xJGB7HClPH270QKBgQCwqrm4\nFzCEU3IF0ZRDCYFBlcjJMnqVhzEEkKNugpcpXxotSrlpFqow6EvkCCF8fssP7s85\nZWvH8jo4trWppBfPT5JYFhSt1Lr0rgqfk7Q/t2oLszZWBp+lNCrmvCIbCRDIwuFw\nx6IWGJ8CMLon5WNZZyx3XB6J+cxjxmACX/7sGQKBgQCC996M80lzwKmsz7ytWAkN\nVF9jqLw8WB1wqaNEYKZ1WclXU+GOCIk9AhMP7jG2SRXR9NQOiIP6x9dMeCjmv3T9\nChBoYvT2/pxrhtqJglHOS6sz0cwv0E0IFbOllMJitUYqxEFxm3yqXXtfLJqYAbyN\nBMd/q3R3mClo6SMkhhYQWg==\n-----END PRIVATE KEY-----\n',
-    scopes: ['https://www.googleapis.com/auth/calendar'],
-  });
-  const calendar = google.calendar({ version: 'v3', auth });
+      email: "firebase-adminsdk-izm56@wiseassist-b8a8a.iam.gserviceaccount.com",
+      key: "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQC7ajpoUTBeb62/\nnbQFAp90B6zT0h+jJO5k+deXpPrj1pTPonBIQ6jDgcR5N5KI2pYZXsLy9JtWFH+M\n16FnwzlIpOFKAF8/hbnHcJynwLAOOqo4iwi4tH/de8X9p61VDVkJGn0b4pfi789g\nI6R1hVpP/Un4rCDqpXQsN6MJM/NRhQ6s7vitNCD0vtFPECgpSB3leUpdOCacTPgI\n8aBP43st1D2ODdvLQJOeJdK363/evgzyAoofofQ5spii2mn/9Y6riGD4lUgTmhL1\ndfdD5Sob8utq6bsuz/dOPlufZqOMsvVQs9nVbILmeSyYcjCpzlKLW/6XHkwncnBB\nmdevNGu5AgMBAAECgf9EDYQSnRM94g+VT2PZmI+N8mYvWagN9ZBwhMhkUuPyF4Ox\ntv+j6Jg/Zb+SGeZ7teO1vVMiJZrCMcSfFS2RdVziTqdVLQ1pDjCHhbyyAqXrL3eK\npfG6ICYjUUPI949ZHZ+sTpIKA3MOVJtYrZiU6Uysqayn6i40W3VJGRV6d1gYdo26\n9fRTEG9v59fBGZ026LwWT7luPH4hblmiqel/TTIrFFut7eRGXPOfKcNtFj7AxBIC\nd/klsId7mW4TDB07kItCVOQb2DDrqK0A1g9L5+fYsnlTyJ+8AjjgIGc4gFXojsbi\n71B3ZIuCOvCRVBfCjIur9Hj2fBn1Ilkoob1ANdECgYEA8uyOWpc6L0oITDN6NRGX\nckF1CCZjnfyeAuw7Uy5KuJO633e2thp6JwSqxZ/TEx4QazVOwUjmyWaIIiS7wNH2\nkGeGN/e7L70Vhdp1PnFg/49ibrVjazAJYcyUKPV5a14CT4J/XRtAiekdDu1jyOTA\n7hDNokXdlzSrCdo7KjQ4/1ECgYEAxYDEoINkvw9TLn4Uw0t93OCXMdPMI43gz4WN\nb3TGAw7XUMCFieBEXblojI+6x2Jw1/EmHpRrDA6YSUNRNCuNjM68UyozWHCiWXtb\nbYb+KLTmz/Kp50vdTwbX5x87NP0RrApwD8Kqny9R7kKzivugHYf6267jlcgEosHY\nXFVem+kCgYBxi+LKM0+uFPOl8pXXwl5AuJnkclUz3oVZJmRgcA3bEqpRk9piaiPY\noxTThO4bTH0uL1+ddt7xGqzdEMB1025ldw5EkNX87WvnAgK1ajeFnNbMmppa2rw3\n63EBaCQV7H41/fBca8WR8NV1Sb7PgyUu4cnMZM27xJGB7HClPH270QKBgQCwqrm4\nFzCEU3IF0ZRDCYFBlcjJMnqVhzEEkKNugpcpXxotSrlpFqow6EvkCCF8fssP7s85\nZWvH8jo4trWppBfPT5JYFhSt1Lr0rgqfk7Q/t2oLszZWBp+lNCrmvCIbCRDIwuFw\nx6IWGJ8CMLon5WNZZyx3XB6J+cxjxmACX/7sGQKBgQCC996M80lzwKmsz7ytWAkN\nVF9jqLw8WB1wqaNEYKZ1WclXU+GOCIk9AhMP7jG2SRXR9NQOiIP6x9dMeCjmv3T9\nChBoYvT2/pxrhtqJglHOS6sz0cwv0E0IFbOllMJitUYqxEFxm3yqXXtfLJqYAbyN\nBMd/q3R3mClo6SMkhhYQWg==\n-----END PRIVATE KEY-----\n",
+      scopes: ["https://www.googleapis.com/auth/calendar"],
+    });
+    const calendar = google.calendar({ version: "v3", auth });
 
+    const event = {
+      summary: title,
+      description: description,
+      start: {
+        dateTime: new Date(`${startTime}T00:00:00`).toISOString(),
+        timeZone: "Jordan Time (GMT+03:00)",
+      },
+      end: {
+        dateTime: new Date(`${endTime}T23:59:59`).toISOString(),
+        timeZone: "Jordan Time (GMT+03:00)",
+      },
+    };
 
-  const event = {
-    summary: title,
-    description: description,
-    start: {
-      dateTime: new Date(`${startTime}T00:00:00`).toISOString(),
-      timeZone: 'Jordan Time (GMT+03:00)',
-    },
-    end: {
-      dateTime: new Date(`${endTime}T23:59:59`).toISOString(),
-      timeZone: 'Jordan Time (GMT+03:00)',
-    },
-  };
+    console.log(event);
 
-  console.log(event);
+    const result = await calendar.events.insert({
+      calendarId: process.env.CALENDAR_ID,
+      resource: event,
+    });
 
-  const result = await calendar.events.insert({
-    calendarId: process.env.CALENDAR_ID, 
-    resource: event,
-  });
-  
-
-  console.log('Event added to Google Calendar:', result.data);
-} catch (error) {
-  console.error('Error adding event to Google Calendar:', error.message);
-  throw error; 
+    console.log("Event added to Google Calendar:", result.data);
+  } catch (error) {
+    console.error("Error adding event to Google Calendar:", error.message);
+    throw error;
   }
 }
 
@@ -237,7 +233,7 @@ const deleteuser = async (req, res) => {
     }
     
     const userID = req.params.id; 
-   
+  
 
 
 

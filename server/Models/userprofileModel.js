@@ -357,4 +357,9 @@ Profile.updatepassword = async (userID,hashedPassword) =>{
 }
 
 
+Profile.unrolled = async (courseID,userID) =>{
+  const result  = await db.query('update course_attendances set is_deleted = true where course_attendances.course_id = $1 and user_id = $2',[courseID,userID]);
+  return result.rows;
+}
+
 module.exports = Profile
