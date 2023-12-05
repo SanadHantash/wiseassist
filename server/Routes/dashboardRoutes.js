@@ -21,6 +21,7 @@ router.put('/dashboard/deleteuser/:id', middleware.authorize,dashboardController
 router.post('/dashboard/createlesson/:id',middleware.authorize, dashboardController.createlesson);
 router.get('/dashboard/alllessons/:id', middleware.authorize,dashboardController.alllessons);
 router.get('/dashboard/lesson/:id', middleware.authorize, dashboardController.lessonpage);
+router.post('/dashboard/lesson/:id/uploadimage', middleware.authorize, dashboardController.uploadlessonimage);
 router.get('/dashboard/allqeustions', middleware.authorize,dashboardController.allquestions);
 router.put('/dashboard/question/:id/addanswer', middleware.authorize,dashboardController.addanswer);
 router.put('/dashboard/answer/:id/update', middleware.authorize,dashboardController.updateanswer);

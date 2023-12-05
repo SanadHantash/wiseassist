@@ -291,7 +291,35 @@ const uploadVideoToFirebase = async (videoBuffer) => {
   return videoUrl;
 };
 
+const uploadlessonimage = async (req,res) =>{
+  try {
+    const {  role } = req.user;
 
+
+    if (role !== 'admin') {
+      return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+    }
+    
+    upload(req, res, async function (err) {
+      if (err) {
+        return res.status(400).json({ success: false, error: err.message });
+      }
+      const lessonID = req.params.id;
+      const imageBuffer = req.file ? req.file.buffer : null;
+
+      const imageUrl = await uploadImageToFirebase(imageBuffer);
+      await Dashboard.uploadlessonimage(
+        lessonID,
+        imageUrl
+      );
+
+      res.status(201).json({ success: true, message: 'image added successfully' });
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(400).json({ success: false, error: 'image added failed' });
+  }
+}
 const alllessons = async (req, res, next) => {
 
   try {
@@ -971,5 +999,6 @@ module.exports = {
     videoviewers,
     countvideoviewers,
     counttechtips,
-    countfaq
+    countfaq,
+    uploadlessonimage
   }
