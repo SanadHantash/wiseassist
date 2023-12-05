@@ -3,12 +3,14 @@
         "hello",
         "hi",
         "howdy",
-        "Greetings"
+        "Greetings",
+        "GG"
     ],
     "answers": [
         "Hey there!",
         "Hello",
         "Hi",
-        "Greetings"
+        "Greetings",
+        "hh"
     ]
 }

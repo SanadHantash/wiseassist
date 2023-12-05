@@ -21,8 +21,10 @@ router.post('/chatbot/test', async (req, res) => {
         const defaultResponse = 'Default answer for unknown question';
 
         const responses = messages.map((message) => {
-            const indexBye = greetingsByeData.questions.indexOf(message.toLowerCase());
-            const indexHello = greetingsHelloData.questions.indexOf(message.toLowerCase());
+            const lowerCaseMessage = message.toLowerCase();
+            
+            const indexBye = greetingsByeData.questions.findIndex(q => q.toLowerCase() === lowerCaseMessage);
+            const indexHello = greetingsHelloData.questions.findIndex(q => q.toLowerCase() === lowerCaseMessage);
 
             if (indexBye !== -1) {
                 return greetingsByeData.answers[indexBye];
