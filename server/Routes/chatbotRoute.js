@@ -1,8 +1,8 @@
-
-
 const express = require('express');
 const router = express.Router();
 const chatbotController = require('../Controllers/chatbotController');
+const greetingsByeData = require('../intents/greetings.bye.json'); 
+const greetingsHelloData = require('../intents/greetings.hello.json'); 
 
 router.post('/chatbot/test', async (req, res) => {
     let { messages } = req.body;
@@ -18,7 +18,20 @@ router.post('/chatbot/test', async (req, res) => {
     try {
         await chatbotController.trainAndSave();
 
-        const responses = await chatbotController.processMessages(messages);
+        const defaultResponse = 'Default answer for unknown question';
+
+        const responses = messages.map((message) => {
+            const indexBye = greetingsByeData.questions.indexOf(message.toLowerCase());
+            const indexHello = greetingsHelloData.questions.indexOf(message.toLowerCase());
+
+            if (indexBye !== -1) {
+                return greetingsByeData.answers[indexBye];
+            } else if (indexHello !== -1) {
+                return greetingsHelloData.answers[indexHello];
+            } else {
+                return defaultResponse;
+            }
+        });
 
         res.json({ responses });
     } catch (error) {
@@ -26,6 +39,5 @@ router.post('/chatbot/test', async (req, res) => {
         res.status(500).json({ message: 'Internal Server Error.' });
     }
 });
-
 
 module.exports = router;
