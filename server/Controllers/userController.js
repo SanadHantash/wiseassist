@@ -175,7 +175,7 @@ const verifycode = async (req, res) => {
       }
 
       const email = storedCode.email;
-
+     
       res.json({ success: true, message: 'Code verification successful', email });
   } catch (err) {
       console.error(err);
@@ -202,9 +202,15 @@ const resetpassword = async (req, res) => {
     }
 
     const { email, password } = req.body;
+
+    const checkemail = await User.forgetpassemail(email);
+
+    if (!checkemail) {
+      return res.status(401).json({ success: false, message: 'Invalid email' });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     await User.resetpassword(email, hashedPassword);
-
+    await User.clearcode(email)
     res.json({ success: true, message: 'Password reset successfully' });
   } catch (error) {
     console.error(error);

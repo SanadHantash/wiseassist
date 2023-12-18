@@ -85,6 +85,18 @@ User.findbyid = async (userID) => {
     }
 };
 
+
+User.forgetpassemail= async (email) => {
+  try {
+      const result = await db.query('SELECT id, code, email FROM codes WHERE email = $1', [email]);
+      return result.rows[0]; 
+  } catch (err) {
+      throw err;
+  }
+};
+
+
+
 User.resetpassword = async (email, hashedPassword) => {
   try {
     const result = await db.query('UPDATE users SET password = $2 WHERE email = $1 RETURNING *', [email, hashedPassword]);
@@ -97,5 +109,14 @@ User.resetpassword = async (email, hashedPassword) => {
   }
 };
 
+
+User.clearcode = async (email) => {
+  try {
+    const result = await db.query('delete from codes where email = $1', [email]);
+    return result.rows[0]; 
+} catch (err) {
+    throw err;
+}
+}
 
 module.exports = User;
