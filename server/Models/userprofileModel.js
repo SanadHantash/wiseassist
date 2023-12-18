@@ -1,6 +1,5 @@
 const db = require('../config');
-const jwt = require('jsonwebtoken');
-const { admin, storage } = require('../firebase');
+const {storage } = require('../firebase');
 const Profile = {};
 
 

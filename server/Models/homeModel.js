@@ -3,7 +3,7 @@ const { admin, storage } = require('../firebase');
 const Home = {};
 
 
-Home.allelderliescourses = async () => {
+Home.allcourses = async () => {
     try {
       const queryResult = await db.query(`
       SELECT 
@@ -64,7 +64,7 @@ Home.allelderliescourses = async () => {
   };
 
   
-Home.allelderliesworkshops = async () => {
+Home.allworkshops = async () => {
     try {
       const queryResult = await db.query(`
       SELECT 

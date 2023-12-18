@@ -35,10 +35,9 @@ const register = async (req, res) => {
           'string.pattern.base':
             'Invalid password format. Password must be at least 8 characters long and include at least one uppercase letter, one lowercase letter, one number, and one of @, #, !, $, %, or &.',
         }),
-      phonenumber: Joi.string().pattern(/^[0-9]{10}$/).required().messages({
+      phonenumber: Joi.string().pattern(/^(077|078|079)[0-9]{7}$/).required().messages({
         'string.pattern.base': 'Invalid phone number format. Please enter a 10-digit phone number.',
       }),
-      //birthdate: Joi.string().required(),
     });
   
    
@@ -97,13 +96,10 @@ const register = async (req, res) => {
       const checkoutObject = {
         payment_method_types: ['card'],
         line_items: [{
-          price: "price_1OAyC3JHXfBpbbMklLDZFaTO",
+          price: process.env.CHECKOUT_SESSION_ID,
           quantity: 1,
         }],
-        mode: 'subscription',
-        // subscription_data: {
-        //   trial_period_days: 7,
-        // },
+        mode: 'subscription'
       };
   
     

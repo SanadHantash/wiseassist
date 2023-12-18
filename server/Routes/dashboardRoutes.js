@@ -1,9 +1,10 @@
 const dashboardController = require('../Controllers/dashboardController');
 const express = require('express');
-const app = express();
+
 const router = express.Router();
 const middleware = require('../middleware/authorization');
-const calendar = require('../middleware/calendar')
+
+
 
 router.post('/dashboard/createcourse',middleware.authorize, dashboardController.createcourse);
 router.post('/dashboard/createtichtip', middleware.authorize,dashboardController.createtichtip);
@@ -18,16 +19,15 @@ router.put('/dashboard/updatetechtip/:id', middleware.authorize,dashboardControl
 router.put('/dashboard/deletecourse/:id', middleware.authorize,dashboardController.deletecourse);
 router.put('/dashboard/deletetechtip/:id', middleware.authorize,dashboardController.deletetechtip);
 router.put('/dashboard/deleteuser/:id', middleware.authorize,dashboardController.deleteuser);
-router.post('/dashboard/createlesson/:id',middleware.authorize, dashboardController.createlesson);
+router.post('/dashboard/createlesson/:id', dashboardController.createlesson);
+router.post('/dashboard/lesson/:id/uploadimage', middleware.authorize,dashboardController.uploadlessonimage);
 router.get('/dashboard/alllessons/:id', middleware.authorize,dashboardController.alllessons);
 router.get('/dashboard/lesson/:id', middleware.authorize, dashboardController.lessonpage);
-router.post('/dashboard/lesson/:id/uploadimage', middleware.authorize, dashboardController.uploadlessonimage);
+router.put('/dashboard/lesson/:id/delete', middleware.authorize, dashboardController.deletelesson);
 router.get('/dashboard/allqeustions', middleware.authorize,dashboardController.allquestions);
 router.put('/dashboard/question/:id/addanswer', middleware.authorize,dashboardController.addanswer);
 router.put('/dashboard/answer/:id/update', middleware.authorize,dashboardController.updateanswer);
 router.put('/dashboard/answer/:id/delete', middleware.authorize,dashboardController.deleteanswer);
-router.get('/dashboard/chatbox/:id',middleware.authorize, dashboardController.chatbox);
-router.post('/dashboard/sendmessage/:id',middleware.authorize, dashboardController.sendmessagetouser);
 router.post('/dashboard/login', dashboardController.login);
 router.get('/dashboard/users/count',middleware.authorize, dashboardController.countusers);
 router.get('/dashboard/courses/count',middleware.authorize, dashboardController.countcourses);

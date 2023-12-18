@@ -1,17 +1,13 @@
 const courseController = require('../Controllers/courseController');
 const express = require('express');
-const app = express();
 const router = express.Router();
 const middleware = require('../middleware/authorization');
 
-router.get('/elderlies/allcourses',courseController.allelderliescourses);
-router.get('/elderlies/allworkshops', courseController.allelderliesworkshops);
-router.get('/elderlies/onsitecourses', courseController.onsiteelderliescourses);
-router.get('/elderlies/onlinecourses', courseController.onlineelderliescourses);
-router.get('/elderlies/onsiteworkshops', courseController.onsiteworkshops);
-router.get('/elderlies/onlineworkshops', courseController.onlineworkshops);
+router.get('/elderlies/allcourses',courseController.allcourses);
+router.get('/elderlies/allworkshops', courseController.allworkshops);
 router.get('/elderlies/detail/:id', courseController.detail);
-router.get('/course/:id/allessons', middleware.authorize,courseController.alllesons);
+router.get('/course/:id/allessonsauth', middleware.authorize,courseController.alllesonsauth);
+router.get('/course/:id/allessons',courseController.alllesons);
 router.get('/course/lesson/:id', courseController.lessonpage);
 router.post('/course/:id/addrate', middleware.authorize,courseController.addratetocourse);
 router.get('/course/:id/getcomments', middleware.authorize,courseController.getcoursecomments);

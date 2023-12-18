@@ -1,9 +1,5 @@
 const Techtip = require('../Models/techtipModel.js');
-const multer  = require('multer');
-const path = require('path');
 
-
-const { admin } = require('../firebase');
 
 const alltechtips = async (req, res, next) => {
 

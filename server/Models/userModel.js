@@ -1,5 +1,4 @@
 const db = require('../config');
-const jwt = require('jsonwebtoken');
 const User = {};
 
 User.checkUserExistence = async (email, user_name, phonenumber) => {

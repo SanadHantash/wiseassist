@@ -1,11 +1,9 @@
 
 const Course = require('../Models/courseModel.js');
-//const multer  = require('multer');
-const path = require('path');
 
 
 
-const allelderliescourses = async (req, res, next) => {
+const allcourses = async (req, res, next) => {
 
     try {
       const courses = await Course.allelderliescourses();
@@ -17,7 +15,7 @@ const allelderliescourses = async (req, res, next) => {
       res.status(500).json({ success: false, error: 'Error in getting courses' });
     }
   };
-const allelderliesworkshops = async (req, res, next) => {
+const allworkshops = async (req, res, next) => {
 
     try {
       const courses = await Course.allelderliesworkshops();
@@ -29,59 +27,6 @@ const allelderliesworkshops = async (req, res, next) => {
       res.status(500).json({ success: false, error: 'Error in getting workshops' });
     }
   };
-
-  const onsiteelderliescourses = async (req, res, next) => {
-
-    try {
-      const courses = await Course.onsiteelderliescourses();
-      res.status(200).json({ success: true, courses });
-    } 
-    
-    catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, error: 'Error in getting courses' });
-    }
-  };
-  const onlineelderliescourses = async (req, res, next) => {
-
-    try {
-      const courses = await Course.onlineelderliescourses();
-      res.status(200).json({ success: true, courses });
-    } 
-    
-    catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, error: 'Error in getting courses' });
-    }
-  };
-
-  
-  const  onsiteworkshops = async (req, res, next) => {
-
-    try {
-      const courses = await  Course.onsiteworkshops();
-      res.status(200).json({ success: true, courses });
-    } 
-    
-    catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, error: 'Error in getting courses' });
-    }
-  };
-
-  const  onlineworkshops = async (req, res, next) => {
-
-    try {
-      const courses = await  Course.onlineworkshops();
-      res.status(200).json({ success: true, courses });
-    } 
-    
-    catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, error: 'Error in getting courses' });
-    }
-  };
-
   
 
   const detail = async (req, res) => {
@@ -120,15 +65,9 @@ const allelderliesworkshops = async (req, res, next) => {
         
         const courseDetails = await Course.detail(courseID);
     
-        if (!courseDetails || courseDetails.length === 0) {
-          throw new Error('Course not found');
-        }
-    
         const is_paid = courseDetails[0].is_paid; 
-    
         if (is_paid === true) { 
-          const userID = req.user.userId;
-         const lessons =  await Course.alllessonspaid(userID, courseID);
+          const lessons =  await Course.alllessonspaid(courseID);
           res.status(201).json({ success: true, lessons });
         } else if (is_paid === false) { 
           const lessons =  await Course.alllessonsfree(courseID);
@@ -141,6 +80,29 @@ const allelderliesworkshops = async (req, res, next) => {
         res.status(400).json({ success: false, error: err.message || 'Course registration failed' });
       }
     };
+    const alllesonsauth = async (req, res, userID) => {
+      try {
+          const courseID = req.params.id;
+  
+          const courseDetails = await Course.detail(courseID);
+  
+          const is_paid = courseDetails[0].is_paid;
+          if (is_paid === true) {
+              const userID = req.user.userId
+              const lessons = await Course.alllessonspaidauth(userID, courseID);
+              res.status(201).json({ success: true, lessons });
+          } else if (is_paid === false) {
+              const lessons = await Course.alllessonsfree(courseID);
+              res.status(201).json({ success: true, lessons });
+          } else {
+              throw new Error('Invalid value for is_paid parameter');
+          }
+      } catch (err) {
+          console.error(err);
+          res.status(400).json({ success: false, error: err.message || 'Course registration failed' });
+      }
+  };
+  
 
     const addratetocourse = async (req, res) => {
       const {rate } = req.body;
@@ -230,14 +192,11 @@ const getlessoncomments = async (req, res) => {
 
 
 module.exports = {
-    allelderliescourses,
-    onsiteelderliescourses,
-    onlineelderliescourses,
+    allcourses,
     detail,
     lessonpage,
-    allelderliesworkshops,
-    onsiteworkshops,
-    onlineworkshops,
+    allworkshops,
+    alllesonsauth,
     alllesons,
     addratetocourse,
     addcommenttocourse,

@@ -1,6 +1,5 @@
 const techtipController = require('../Controllers/techtipController');
 const express = require('express');
-const app = express();
 const router = express.Router();
 const middleware = require('../middleware/authorization');
 

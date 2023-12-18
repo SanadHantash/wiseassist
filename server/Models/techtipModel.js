@@ -1,6 +1,6 @@
 const db = require('../config');
 
-const { admin, storage } = require('../firebase');
+const {storage} = require('../firebase');
 const Techtip = {};
 
 Techtip.alltechtips = async () => {

@@ -1,7 +1,7 @@
 const db = require('../config');
 const jwt = require("jsonwebtoken");
 const passport = require("passport");
-// require("../Middleware/authorization");
+
 require("../middleware/auth");
 
 
@@ -59,7 +59,7 @@ function isLoggedIn(req, res, next) {
               message: "User logged in successfully",
               token: token,
             });
-            // console.log(token)
+           
           } else {
             const role_id = "2";
             

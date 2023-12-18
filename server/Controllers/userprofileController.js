@@ -2,11 +2,11 @@ const Profile = require("../Models/userprofileModel");
 const Course = require("../Models/courseModel");
 const User = require("../Models/userModel");
 const multer = require("multer");
-const path = require("path");
+
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const { admin } = require("../firebase");
-const { log } = require("console");
+
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage }).single("image");

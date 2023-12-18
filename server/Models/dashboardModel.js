@@ -1,6 +1,5 @@
 const db = require("../config");
-const jwt = require("jsonwebtoken");
-const { admin, storage } = require("../firebase");
+const {storage } = require("../firebase");
 const Dashboard = {};
 
 Dashboard.createcourse = async (
@@ -338,23 +337,40 @@ Dashboard.deleteuser = async (userID) => {
   }
 };
 
-Dashboard.createlesson = async (courseID, videoUrl, title, description,duration) => {
+Dashboard.createLesson = async (courseID, videoUrl, title) => {
   const result = await db.query(
-    "INSERT INTO lesson (course_id,video,title,description,duration) VALUES ($1, $2,$3,$4,$5) RETURNING *",
-    [courseID, videoUrl, title, description,duration]
+    "INSERT INTO lesson (course_id, video, title) VALUES ($1, $2, $3) RETURNING *",
+    [courseID, videoUrl, title]
   );
   return result.rows[0];
 };
+
 
 Dashboard.alllessons = async (courseID, page, pageSize) => {
   try {
     const offset = (page - 1) * pageSize;
     const result = await db.query(
-      "SELECT lesson.id, lesson.title FROM lesson INNER JOIN courses ON courses.id = lesson.course_id WHERE courses.id = $1 AND lesson.is_deleted = false LIMIT $2 OFFSET $3;",
+      "SELECT lesson.id, lesson.title, lesson.duration FROM lesson INNER JOIN courses ON courses.id = lesson.course_id WHERE courses.id = $1 AND lesson.is_deleted = false LIMIT $2 OFFSET $3;",
       [courseID, pageSize, offset]
     );
 
-    return result.rows;
+    
+    const formattedResult = result.rows.map(row => {
+   
+      const [hours, minutes, seconds] = row.duration.split(':');
+
+    
+      const formattedHours = parseInt(hours, 10) > 0 ? `${parseInt(hours, 10)}:` : '';
+      const formattedMinutes = `${parseInt(minutes, 10)}:${parseInt(seconds, 10)}`;
+
+      return {
+        id: row.id,
+        title: row.title,
+        duration: formattedHours + formattedMinutes,
+      };
+    });
+
+    return formattedResult;
   } catch (err) {
     throw err;
   }
@@ -397,6 +413,18 @@ Dashboard.uploadlessonimage = async (lessonID, imageUrl) => {
     const result = await db.query(
       "INSERT INTO lesson_image (lesson_id, image) VALUES ($1, $2)",
       [lessonID, imageUrl]
+    );
+    return result.rows;
+  } catch (err) {
+    throw err;
+  }
+};
+
+Dashboard.deletelesson = async (lessonID) => {
+  try {
+    const result = await db.query(
+      "UPDATE lesson SET is_deleted = TRUE  WHERE id = $1",
+      [lessonID]
     );
     return result.rows;
   } catch (err) {
@@ -513,7 +541,7 @@ Dashboard.allquestions = async (page, pageSize) => {
   try {
     const offset = (page - 1) * pageSize;
     const result = await db.query(
-      "SELECT faq.id,faq.question,users.user_name from faq  inner join  users on users.id = faq.user_id where faq.is_deletedq = false LIMIT $1 OFFSET $2;",
+      "SELECT faq.id,faq.question,users.user_name,faq.answer from faq inner join users on users.id = faq.user_id where faq.is_deletedq = false LIMIT $1 OFFSET $2;",
       [pageSize, offset]
     );
     return result.rows;
@@ -566,17 +594,7 @@ Dashboard.login = async (email) => {
   }
 };
 
-Dashboard.getrecivedmessages = async (sender, reciver) => {
-  try {
-    const result = await db.query(
-      "SELECT chat.id, chat.message, users.user_name FROM chat INNER JOIN users ON users.id = chat.sender_id WHERE chat.sender_id = $1 and chat.receiver_id = $2 ",
-      [sender, reciver]
-    );
-    return result.rows;
-  } catch (error) {
-    throw error;
-  }
-};
+
 
 Dashboard.getadmins = async () => {
   try {
@@ -589,25 +607,7 @@ Dashboard.getadmins = async () => {
   }
 };
 
-Dashboard.sendmessagetouser = async (sendersID, reciverID, message) => {
-  const result = await db.query(
-    "insert into chat (sender_id,receiver_id,message)values ($1,$2,$3)",
-    [sendersID, reciverID, message]
-  );
-  return result.rows;
-};
 
-Dashboard.getsentmessages = async (senderID, reciverID) => {
-  try {
-    const result = await db.query(
-      "SELECT chat.id, chat.message,users.user_name FROM chat INNER JOIN users ON users.id = chat.sender_id WHERE users.role_id = 3 and chat.sender_id = $1 and chat.receiver_id = $2 ",
-      [senderID, reciverID]
-    );
-    return result.rows;
-  } catch (error) {
-    throw error;
-  }
-};
 
 Dashboard.allusers = async (page, pageSize, searchTerm, roleFilter) => {
   try {

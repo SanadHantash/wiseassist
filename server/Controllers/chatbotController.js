@@ -30,13 +30,12 @@ const trainAndSave = () => {
 
 
 const processMessages = async (messages) => {
-  
-    await manager.load(); 
+    await manager.load();
     const responses = [];
 
     for (const message of messages) {
         const response = await manager.process("en", message);
-        responses.push(response.answer);
+        responses.push({ question: message, answer: response.answer });
     }
 
     return responses;

@@ -1,6 +1,5 @@
 const Dashboard = require('../Models/dashboardModel.js');
 const multer  = require('multer');
-const path = require('path');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const { google } = require('googleapis');
@@ -8,6 +7,9 @@ const { admin } = require('../firebase');
 const storage = multer.memoryStorage(); 
 const upload = multer({ storage: storage }).single('image');
 const videoupload = multer({ storage: storage }).single('video');
+const exiftool = require('exiftool-vendored').exiftool;
+const util = require('util');
+const execFile = util.promisify(require('child_process').execFile);
 
 const createcourse = async (req, res) => {
   try {
@@ -205,7 +207,7 @@ const updatecourse = async(req,res) => {
   }
 }
 
-const deletecourse = async(req,res,next) =>{
+const deletecourse = async(req,res) =>{
   try{
     const {  role } = req.user;
 
@@ -222,6 +224,7 @@ const deletecourse = async(req,res,next) =>{
     res.status(400).json({ success: false, error: 'Course deleted failed' });
   }
 }
+
 
 const deleteuser = async (req, res) => {
   try {
@@ -248,24 +251,28 @@ const deleteuser = async (req, res) => {
 
 const createlesson = async (req, res) => {
   try {
-    const {  role } = req.user;
+    // const { role } = req.user;
 
-   
-    if (role !== 'admin') {
-      return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
-    }
-    
+    // if (role !== 'admin') {
+    //   return res.status(403).json({ success: false, message: 'Access denied. Only admin users are allowed.' });
+    // }
+
     videoupload(req, res, async function (err) {
       if (err) {
         return res.status(400).json({ success: false, error: err.message });
       }
 
       const courseID = req.params.id;
-      const {title,description} = req.body;
+      const { title } = req.body;
       const videoBuffer = req.file ? req.file.buffer : null;
 
+
       const videoUrl = await uploadVideoToFirebase(videoBuffer);
-      const result = await Dashboard.createlesson(courseID,videoUrl,title,description);
+
+
+
+
+      const result = await Dashboard.createLesson(courseID, videoUrl, title);
 
       if (result) {
         return res.status(201).json({ success: true, message: 'Lesson added successfully', data: result });
@@ -278,6 +285,7 @@ const createlesson = async (req, res) => {
     res.status(500).json({ success: false, error: 'Internal Server Error' });
   }
 };
+
 const uploadVideoToFirebase = async (videoBuffer) => {
   const bucket = admin.storage().bucket();
   const folderPath = 'videos/';
@@ -290,6 +298,10 @@ const uploadVideoToFirebase = async (videoBuffer) => {
   const videoUrl = `https://storage.googleapis.com/${bucket.name}/${filePath}`;
   return videoUrl;
 };
+
+
+
+
 
 const uploadlessonimage = async (req,res) =>{
   try {
@@ -365,6 +377,24 @@ const alllessons = async (req, res, next) => {
       res.status(500).json({ success: false, error: 'Error in getting lesson' });
     }
   };
+
+  const deletelesson = async(req,res,next) =>{
+    try{
+      const {  role } = req.user;
+  
+     
+      if (role !== 'admin') {
+        return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
+      }
+      
+      const lessonID = req.params.id;
+      await Dashboard.deletelesson(lessonID);
+      res.status(200).json({ success: true, message: 'Course deleted successfully' });
+    } catch(err){
+      console.error(err);
+      res.status(400).json({ success: false, error: 'Course deleted failed' });
+    }
+  }
 
   const createtichtip = async (req,res,next) => {
     try {
@@ -492,8 +522,6 @@ const alllessons = async (req, res, next) => {
         const pageSize = parseInt(req.query.pageSize) || 10;
         const question = await Dashboard.allquestions(page,pageSize);
 
-  
-  
         res.status(200).json(question); 
       }
       catch (err) {
@@ -574,10 +602,6 @@ const alllessons = async (req, res, next) => {
       }
     }
 
- 
-
-    
-
 
 
     const login = async (req, res) => {
@@ -612,56 +636,7 @@ const alllessons = async (req, res, next) => {
     };
     
 
-    const sendmessagetouser = async(req,res) =>{
-      try{
-        const {role } = req.user;
-
-
-        if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
-        }
-          const senderID = await Dashboard.getadmins();;
-         const reciverID = req.params.id;
-          const {message} = req.body;
-  
-          for (const sendersID of senderID) {
-              await Dashboard.sendmessagetouser(sendersID, reciverID, message);
-          }
-          res.status(201).json({ success: true, message: 'message sent successfully' });
-      }catch(err){
-          console.error(err);
-          res.status(400).json({ success: false, error: 'message sent failed' });
-      }
-  }
-
-  
-
-  const chatbox = async(req,res)=>{
-      try{
-        const {role } = req.user;
-
-
-        if (role !== 'admin') {
-          return res.status(403).json({ success: false, message: 'Access denied. Only admin are allowed.' });
-        }
-
-        const  senderID = req.user.userId;
-        const  reciverID = req.params.id;
-
-
-        const reciver = req.user.userId;
-        const sender = req.params.id;
-        
-        
-      const receivedMessages = await Dashboard.getrecivedmessages(sender, reciver);
-    const sentMessages = await Dashboard.getsentmessages(senderID, reciverID);
-    res.status(200).json({ success: true, receivedMessages, sentMessages });
-      }catch (err) {
-        console.error(err);
-        res.status(500).json({ success: false, message: 'Internal server error' });
-      }
-  }
-
+ 
 
   const allusers = async(req,res)=>{
     try{
@@ -978,8 +953,6 @@ module.exports = {
     updateanswer,
     deleteanswer,
     login,
-    sendmessagetouser,
-    chatbox,
     allusers,
     countusers,
     countcourses,
@@ -1000,5 +973,6 @@ module.exports = {
     countvideoviewers,
     counttechtips,
     countfaq,
-    uploadlessonimage
+    uploadlessonimage,
+    deletelesson
   }

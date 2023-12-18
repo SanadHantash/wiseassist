@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const chatbotController = require('../Controllers/chatbotController');
-const greetingsByeData = require('../intents/greetings.bye.json'); 
-const greetingsHelloData = require('../intents/greetings.hello.json'); 
+const greetingsByeData = require('../intents/greetings.bye.json');
+const greetingsHelloData = require('../intents/greetings.hello.json');
 
-router.post('/chatbot/test', async (req, res) => {
+router.post('/chatbot', async (req, res) => {
     let { messages } = req.body;
 
     if (typeof messages === 'string') {
@@ -18,22 +18,28 @@ router.post('/chatbot/test', async (req, res) => {
     try {
         await chatbotController.trainAndSave();
 
-        const defaultResponse = 'Default answer for unknown question';
+        const defaultResponse = 'Default answer for an unknown question';
 
-        const responses = messages.map((message) => {
-            const lowerCaseMessage = message.toLowerCase();
-            
-            const indexBye = greetingsByeData.questions.findIndex(q => q.toLowerCase() === lowerCaseMessage);
-            const indexHello = greetingsHelloData.questions.findIndex(q => q.toLowerCase() === lowerCaseMessage);
+        const responses = [];
+
+        for (const message of messages) {
+            const lowerCaseMessage = message.toLowerCase().replace(/\s/g, '');
+            const strippedMessage = lowerCaseMessage.replace(/[^\w\s]/gi, '');
+
+            const indexBye = greetingsByeData.questions.findIndex(q => q.toLowerCase().replace(/\s/g, '') === strippedMessage);
+            const indexHello = greetingsHelloData.questions.findIndex(q => q.toLowerCase().replace(/\s/g, '') === strippedMessage);
+
+            let question = message;
+            let answer = defaultResponse;
 
             if (indexBye !== -1) {
-                return greetingsByeData.answers[indexBye];
+                answer = greetingsByeData.answers[indexBye];
             } else if (indexHello !== -1) {
-                return greetingsHelloData.answers[indexHello];
-            } else {
-                return defaultResponse;
+                answer = greetingsHelloData.answers[indexHello];
             }
-        });
+
+            responses.push({ question, answer });
+        }
 
         res.json({ responses });
     } catch (error) {
