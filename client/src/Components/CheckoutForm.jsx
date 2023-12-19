@@ -5,7 +5,7 @@ import { useCookies } from "react-cookie";
 import CardSection from "./CardSection";
 
 const CheckoutForm = (props) => {
-  const [cookies] = useCookies(['token']);
+  const [cookies] = useCookies(["token"]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,7 +23,7 @@ const CheckoutForm = (props) => {
       const token = cookies.Token;
 
       try {
-        axios.defaults.headers.common['Authorization'] = token;
+        axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.post(
           "http://localhost:8080/subscribtion",
           {
@@ -45,10 +45,10 @@ const CheckoutForm = (props) => {
 
   return (
     <div>
-      <div className="product-info">
+      {/* <div className="product-info">
         <h3 className="product-title">Apple MacBook Pro</h3>
         <h4 className="product-price">$999</h4>
-      </div>
+      </div> */}
       <form onSubmit={handleSubmit}>
         <CardSection />
         <button disabled={!props.stripe} className="btn-pay">

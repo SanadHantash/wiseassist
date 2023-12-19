@@ -13,8 +13,7 @@ function UserModal({ user, closeModal, updateUser }) {
     axios
       .put(`http://localhost:3000/users/${user.id}`, updatedUser)
       .then((response) => {
-        // Assuming your API returns the updated user data
-        updateUser(response.data); // Update the user in the parent component
+        updateUser(response.data);
         closeModal();
       })
       .catch((error) => {

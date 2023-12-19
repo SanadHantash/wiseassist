@@ -3,17 +3,17 @@ import axios from "axios";
 import background from "../assets/background.png";
 import FormHeader from "../Components/FormHeader";
 // import Cookies from "js-cookie";
-import {useCookies} from "react-cookie";
+import { useCookies } from "react-cookie";
 import Header from "../Components/Header";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 
 function RegisterPage() {
-  const [cookies, setCookie] = useCookies(['token']);
+  const [cookies, setCookie] = useCookies(["token"]);
   useState(() => {
-        window.scrollTo(0, 0);
-      }, []);
-  const { isLoggedIn, login, logout ,register} = useAuth();
+    window.scrollTo(0, 0);
+  }, []);
+  const { isLoggedIn, login, logout, register } = useAuth();
   const [formData, setFormData] = useState({
     first_name: "",
     last_name: "",
@@ -55,17 +55,15 @@ function RegisterPage() {
     // eslint-disable-next-line no-lone-blocks
     {
       try {
-        
         const response = await axios.post(
           "http://localhost:8080/register",
           formData
         );
         const token = response.data.token;
-       
 
         console.log("User registered successfully!");
-        setCookie('Token', token, { path: '/' });
-              navigate("/");
+        setCookie("Token", token, { path: "/" });
+        navigate("/");
       } catch (error) {
         console.error("Error registering user:", error);
 

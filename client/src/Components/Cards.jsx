@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function Cards() {
   const [courseData, setCourses] = useState([]);
@@ -38,7 +39,7 @@ function Cards() {
           </button>
         </div>
       </div>
-      <div className="flex flex-row flex-wrap justify-center gap-10 items-center  ">
+      <div className="flex flex-row flex-wrap justify-center gap-10  items-stretch ">
         {/* {Array.isArray(courseData) && courseData.length > 0 ? ( */}
         {courseData && courseData.courses ? (
           courseData.courses.map((course) => (
@@ -47,7 +48,7 @@ function Cards() {
               className="!z-5 relative flex flex-col rounded-[20px] max-w-[300px] border border-solid border-gray-300 bg-white bg-clip-border shadow-3xl shadow-shadow-500 w-full !p-4 3xl:p-![18px] undefined"
             >
               <div className="h-full w-full">
-                <div className="relative w-full">
+                <div className="relative w-full h-52">
                   <img
                     src={course.image}
                     className="mb-3 h-full w-full rounded-xl 3xl:h-full 3xl:w-full"
@@ -91,12 +92,11 @@ function Cards() {
                       {course.start_time} - {course.end_time}
                     </p>
                   </div>
-                  <button
-                    href=""
-                    className="linear rounded-[20px] bg-indigo-950 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-indigo-900 active:bg-brand-700"
-                  >
-                    View Course
-                  </button>
+                  <Link to={`/courseDetails/${course.id}`}>
+                    <button className="linear rounded-lg bg-indigo-950 px-4 py-2 text-base font-medium text-white transition duration-200 hover:bg-indigo-900 active:bg-brand-700">
+                      View Course
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>

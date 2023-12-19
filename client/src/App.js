@@ -18,6 +18,7 @@ import AboutUs from "./Pages/AboutUs";
 import WorkshopDetails from "./Pages/WorkshopDetails";
 import Dashboard from "./Dashboard/pages/Dashboard";
 import NotFound from "./Pages/NotFound";
+import Profile from "./Pages/Profile";
 function App() {
   return (
     <div className="App">
@@ -43,6 +44,8 @@ function App() {
             <Route path="/signup" element={<RegisterPage />} />
             <Route path="/workshop" element={<Workshops />} />
             <Route path="/techtips" element={<Techtip />} />
+
+            <Route path="/profile" element={<Profile />} />
             <Route path="/TipDetail/:id" element={<TipDetail />} />
             <Route path="/contact" element={<Contactus />} />
             <Route path="/pricing" element={<Subscribe />} />

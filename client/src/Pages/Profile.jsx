@@ -5,117 +5,173 @@ import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 
 function Profile() {
-  const [isSignIn, setSignin] = useState(false);
-  const [isAdmin, setAdmin] = useState(false);
   return (
     <>
-      <Header
-        setSignin={setSignin}
-        setAdmin={setAdmin}
-        isAdmin={isAdmin}
-        isSignIn={isSignIn}
+      <Header />
+
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+      <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap"
+        rel="stylesheet"
       />
-      <div className="h-[40rem] p-3 space-y-2 w-60 dark:bg-gray-900 border border-solid dark:text-gray-100">
-        <div className="flex items-center p-2 space-x-4">
-          <img
-            src="https://source.unsplash.com/100x100/?portrait"
-            alt=""
-            className="w-12 h-12 rounded-full dark:bg-gray-500"
-          />
-          <div>
-            <h2 className="text-lg font-semibold">Leroy Jenkins</h2>
-            <span className="flex items-center space-x-1">
-              {/* <a
-              rel="noopener noreferrer"
-              href="/"
-              className="text-xs hover:underline dark:text-gray-400"
+
+      <div class="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
+        <aside class="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
+          <div class="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
+            <h2 class="pl-3 mb-4 text-2xl font-semibold">Settings</h2>
+            <button
+              href="#"
+              class="flex items-center px-3 py-2.5 font-bold bg-white  text-indigo-900 border rounded-full"
             >
-              View profile
-            </a> */}
-            </span>
+              Public Profile
+            </button>
+            <button
+              href="#"
+              class="flex items-center px-3 py-2.5 font-semibold  hover:text-indigo-900 hover:border hover:rounded-full"
+            >
+              Account Settings
+            </button>
+            <button
+              href="#"
+              class="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full  "
+            >
+              Courses
+            </button>
+            <button
+              href="#"
+              class="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full  "
+            >
+              Workshops
+            </button>
+            <button
+              href="#"
+              class="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full  "
+            >
+              Plan
+            </button>
           </div>
-        </div>
-        <div className="divide-y dark:divide-gray-700 h-full">
-          <ul className="pt-2 pb-4 space-y-1 text-sm">
-            <li>
-              <button
-                rel="noopener noreferrer"
-                className="flex items-center p-2 space-x-3 rounded-md border border-solid border-indigo-900 w-full hover:bg-indigo-900 hover:text-white "
-              >
-                <span>Profile</span>
-              </button>
-            </li>
-            <li>
-              <button
-                rel="noopener noreferrer"
-                className="flex items-center p-2 space-x-3 rounded-md border border-solid border-indigo-900 w-full hover:bg-indigo-900 hover:text-white "
-              >
-                <span>Update Photo</span>
-              </button>
-            </li>
-            <li>
-              <button
-                rel="noopener noreferrer"
-                className="flex items-center p-2 space-x-3 rounded-md border border-solid border-indigo-900 w-full hover:bg-indigo-900 hover:text-white"
-              >
-                <span>Account Security</span>
-              </button>
-            </li>
-            <li>
-              <button
-                rel="noopener noreferrer"
-                className="flex items-center p-2 space-x-3 rounded-md border border-solid border-indigo-900 w-full hover:bg-indigo-900 hover:text-white"
-              >
-                <span>Courses</span>
-              </button>
-            </li>
-            <li>
-              <button
-                rel="noopener noreferrer"
-                className="flex items-center p-2 space-x-3 rounded-md border border-solid border-indigo-900 w-full hover:bg-indigo-900 hover:text-white"
-              >
-                <span>Workshops</span>
-              </button>
-            </li>
-          </ul>
-          {/* <ul className="pt-4 pb-2 space-y-1 text-sm">
-          <li>
-            <a
-              rel="noopener noreferrer"
-              href="#"
-              className="flex items-center p-2 space-x-3 rounded-md"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-                className="w-5 h-5 fill-current dark:text-gray-400"
-              >
-                <path d="M245.151,168a88,88,0,1,0,88,88A88.1,88.1,0,0,0,245.151,168Zm0,144a56,56,0,1,1,56-56A56.063,56.063,0,0,1,245.151,312Z"></path>
-                <path d="M464.7,322.319l-31.77-26.153a193.081,193.081,0,0,0,0-80.332l31.77-26.153a19.941,19.941,0,0,0,4.606-25.439l-32.612-56.483a19.936,19.936,0,0,0-24.337-8.73l-38.561,14.447a192.038,192.038,0,0,0-69.54-40.192L297.49,32.713A19.936,19.936,0,0,0,277.762,16H212.54a19.937,19.937,0,0,0-19.728,16.712L186.05,73.284a192.03,192.03,0,0,0-69.54,40.192L77.945,99.027a19.937,19.937,0,0,0-24.334,8.731L21,164.245a19.94,19.94,0,0,0,4.61,25.438l31.767,26.151a193.081,193.081,0,0,0,0,80.332l-31.77,26.153A19.942,19.942,0,0,0,21,347.758l32.612,56.483a19.937,19.937,0,0,0,24.337,8.73l38.562-14.447a192.03,192.03,0,0,0,69.54,40.192l6.762,40.571A19.937,19.937,0,0,0,212.54,496h65.222a19.936,19.936,0,0,0,19.728-16.712l6.763-40.572a192.038,192.038,0,0,0,69.54-40.192l38.564,14.449a19.938,19.938,0,0,0,24.334-8.731L469.3,347.755A19.939,19.939,0,0,0,464.7,322.319Zm-50.636,57.12-48.109-18.024-7.285,7.334a159.955,159.955,0,0,1-72.625,41.973l-10,2.636L267.6,464h-44.89l-8.442-50.642-10-2.636a159.955,159.955,0,0,1-72.625-41.973l-7.285-7.334L76.241,379.439,53.8,340.562l39.629-32.624-2.7-9.973a160.9,160.9,0,0,1,0-83.93l2.7-9.972L53.8,171.439l22.446-38.878,48.109,18.024,7.285-7.334a159.955,159.955,0,0,1,72.625-41.973l10-2.636L222.706,48H267.6l8.442,50.642,10,2.636a159.955,159.955,0,0,1,72.625,41.973l7.285,7.334,48.109-18.024,22.447,38.877-39.629,32.625,2.7,9.972a160.9,160.9,0,0,1,0,83.93l-2.7,9.973,39.629,32.623Z"></path>
-              </svg>
-              <span>Settings</span>
-            </a>
-          </li>
-          <li>
-            <a
-              rel="noopener noreferrer"
-              href="#"
-              className="flex items-center p-2 space-x-3 rounded-md"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 512 512"
-                className="w-5 h-5 fill-current dark:text-gray-400"
-              >
-                <path d="M440,424V88H352V13.005L88,58.522V424H16v32h86.9L352,490.358V120h56V456h88V424ZM320,453.642,120,426.056V85.478L320,51Z"></path>
-                <rect width="32" height="64" x="256" y="232"></rect>
-              </svg>
-              <span>Logout</span>
-            </a>
-          </li>
-        </ul> */}
-        </div>
+        </aside>
+        <main class="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
+          <div class="p-2 md:p-4">
+            <div class="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
+              <h2 class="pl-6 text-2xl font-bold sm:text-xl">Public Profile</h2>
+              <div class="grid max-w-2xl mx-auto mt-8">
+                <div class="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
+                  <img
+                    class="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
+                    src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fGZhY2V8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&w=500&q=60"
+                    alt="Bordered avatar"
+                  />
+                  <div class="flex flex-col space-y-5 sm:ml-8">
+                    <button
+                      type="button"
+                      class="py-3.5 px-7 text-base font-medium text-indigo-100 focus:outline-none bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:z-10 focus:ring-4 focus:ring-indigo-200 "
+                    >
+                      Change picture
+                    </button>
+                    <button
+                      type="button"
+                      class="py-3.5 px-7 text-base font-medium text-indigo-900 focus:outline-none bg-white rounded-lg border border-indigo-200 hover:bg-indigo-100 hover:text-[#202142] focus:z-10 focus:ring-4 focus:ring-indigo-200 "
+                    >
+                      Delete picture
+                    </button>
+                  </div>
+                </div>
+                <div class="items-center mt-8 sm:mt-14 text-[#202142]">
+                  <div class="flex flex-col items-center w-full mb-2 space-x-0 space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 sm:mb-6">
+                    <div class="w-full">
+                      <label
+                        for="first_name"
+                        class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
+                      >
+                        Your first name
+                      </label>
+                      <input
+                        type="text"
+                        id="first_name"
+                        class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
+                        placeholder="Your first name"
+                        value="Jane"
+                        required
+                      />
+                    </div>
+                    <div class="w-full">
+                      <label
+                        for="last_name"
+                        class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
+                      >
+                        Your last name
+                      </label>
+                      <input
+                        type="text"
+                        id="last_name"
+                        class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
+                        placeholder="Your last name"
+                        value="Ferguson"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="mb-2 sm:mb-6">
+                    <label
+                      for="email"
+                      class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
+                    >
+                      Your email
+                    </label>
+                    <input
+                      type="email"
+                      id="email"
+                      class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
+                      placeholder="your.email@mail.com"
+                      required
+                    />
+                  </div>
+                  <div class="mb-2 sm:mb-6">
+                    <label
+                      for="profession"
+                      class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
+                    >
+                      Profession
+                    </label>
+                    <input
+                      type="text"
+                      id="profession"
+                      class="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5 "
+                      placeholder="your profession"
+                      required
+                    />
+                  </div>
+                  <div class="mb-6">
+                    <label
+                      for="message"
+                      class="block mb-2 text-sm font-medium text-indigo-900 dark:text-white"
+                    >
+                      Bio
+                    </label>
+                    <textarea
+                      id="message"
+                      rows="4"
+                      class="block p-2.5 w-full text-sm text-indigo-900 bg-indigo-50 rounded-lg border border-indigo-300 focus:ring-indigo-500 focus:border-indigo-500 "
+                      placeholder="Write your bio here..."
+                    ></textarea>
+                  </div>
+                  <div class="flex justify-end">
+                    <button
+                      type="submit"
+                      class="text-white bg-indigo-700  hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </main>
       </div>
+
       <Footer />
     </>
   );

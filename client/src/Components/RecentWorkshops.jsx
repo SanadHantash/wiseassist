@@ -1,42 +1,25 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 function RecentWorkshops() {
-  const [workshops, setWorkshops] = useState([
-    {
-      title: "Workshop 1",
-      date: "Saturday, Jan 27, 2018 at 5:30 PM",
-      venue: "Gyan Manch",
-      imageURL:
-        "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGV2ZW50fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-      description:
-        '"For a woman to be complete, she has to be a blend of Paro & Chandramukhi. I feel that I am that woman." - Rekha',
-      buttonLink: "https://www.google.com",
-    },
-    {
-      title: "Workshop 2",
-      date: "Sunday, Feb 10, 2018 at 4:00 PM",
-      venue: "Art Center",
-      imageURL:
-        "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTJ8fGV2ZW50fGVufDB8fDB8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
-      description:
-        '"The power you have is to be the best version of yourself you can be, so you can create a better world." - Ashley Rickards',
-      buttonLink: "https://www.google.com",
-    },
-    // ... Add more workshop objects as needed
-  ]);
+  const [workshops, setWorkshops] = useState([]);
   const [currentSlide, setCurrentSlide] = useState(0);
 
   useEffect(() => {
-    // Fetch workshop data using Axios
-    // axios
-    //   .get("your_api_endpoint")
-    //   .then((response) => {
-    //     setWorkshops(response.data);
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error fetching workshops:", error);
-    //   });
+    axios
+      .get("http://localhost:8080/home/allworkshops")
+      .then((response) => {
+        if (response.data.success) {
+          setWorkshops(response.data.courses);
+          console.log(response.data.courses);
+        } else {
+          console.error("Failed to fetch workshops.");
+        }
+      })
+      .catch((error) => {
+        console.error("Error fetching workshops:", error);
+      });
   }, []);
 
   const handlePrevSlide = () => {
@@ -75,7 +58,7 @@ function RecentWorkshops() {
                     </div>
                     <div className="lg:w-2/6 lg:pl-5">
                       <img
-                        src={workshop.imageURL}
+                        src={workshop.image}
                         alt="Event"
                         className="w-full"
                       />
@@ -91,7 +74,7 @@ function RecentWorkshops() {
                               <i className="fa fa-map-marker"></i>
                             </td>
                             <td>
-                              <div>{workshop.venue}</div>
+                              <div>{workshop.category}</div>
                               <div className="dim-color">
                                 <a
                                   href="https://www.google.co.in"
@@ -112,7 +95,9 @@ function RecentWorkshops() {
                               <i className="fa fa-clock-o"></i>
                             </td>
                             <td>
-                              <div>{workshop.date}</div>
+                              <div>
+                                {workshop.start_time} - {workshop.end_time}
+                              </div>
                               <div
                                 data-livestamp="1517054400"
                                 className="dim-color"
@@ -125,14 +110,11 @@ function RecentWorkshops() {
                         {workshop.description}
                       </div>
                       <div className="group-of-btn py-3">
-                        <a
-                          href="https://www.google.com"
-                          target="_blank"
-                          rel="noreferrer"
-                          className="btn book-ticket bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded"
-                        >
-                          Book Your Entry Pass
-                        </a>
+                        <Link to={`/workshopsDetail/${workshop.id}`}>
+                          <button className="btn book-ticket bg-indigo-900 hover:bg-indigo-950 text-white px-4 py-2 rounded">
+                            See Details
+                          </button>
+                        </Link>
                       </div>
                     </div>
                   </div>

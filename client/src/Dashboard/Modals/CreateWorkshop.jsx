@@ -1,42 +1,63 @@
 import React, { useState } from "react";
 import axios from "axios";
 
-function CourseModal({ course, closeModal, updateCourse }) {
-  const [updatedCourse, setUpdatedCourse] = useState(course);
+function CreateWorkshop({ addWorkshop, closeModal, addedWorkshop }) {
+  const [createWorkshop, setCreatedWorkshop] = useState(addWorkshop);
+  const [image, setImage] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setUpdatedCourse({ ...updatedCourse, [name]: value });
+    setCreatedWorkshop({ ...createWorkshop, [name]: value });
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    setImage(file);
+    setCreatedWorkshop((prevData) => ({ ...prevData, image: file }));
   };
 
   const handleUpdate = async () => {
     try {
-      console.log("Updating course:", updatedCourse); // Log the updatedCourse before making the request
+      const form = new FormData();
+      form.append("title", createWorkshop.title);
+      form.append("detail", createWorkshop.detail);
+      form.append("description", createWorkshop.description);
+      form.append("trainer", createWorkshop.trainer);
+      form.append("category_id", createWorkshop.category_id);
+      form.append("is_paid", createWorkshop.is_paid);
+      form.append("site", createWorkshop.site);
+      form.append("start_time", createWorkshop.start_time);
+      form.append("end_time", createWorkshop.end_time);
+      form.append("image", createWorkshop.image); // Append the image as a file
 
-      const response = await axios.put(
-        `http://localhost:8080/dashboard/updatecourse/${course.id}`,
-        updatedCourse
+      // Make the API call
+      const response = await axios.post(
+        "http://localhost:8080/dashboard/createcourse",
+        form,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data", // Set content type to multipart/form-data
+          },
+        }
       );
 
-      updateCourse(response.data.course);
-
+      addedWorkshop(response.data);
       closeModal();
     } catch (error) {
-      console.error("Error updating course:", error);
+      console.error("Error updating workshop:", error);
     }
   };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center backdrop-blur backdrop-filter   bg-black bg-opacity-30">
       <div className="bg-white rounded-lg w-full sm:w-96 shadow-lg p-6 max-h-[80vh] overflow-y-auto  scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-indigo-950 scrollbar-track-indigo-100">
-        <h2 className="text-xl font-semibold mb-4"> Edit Course</h2>
-        {/* Input fields to edit course information */}
+        <h2 className="text-xl font-semibold mb-4"> Create Workshop</h2>
+
         <div className="flex flex-col gap-y-2">
           <label className="font-bold">Title</label>
           <input
             type="text"
             name="title"
-            value={updatedCourse.title}
+            value={createWorkshop.title}
             onChange={handleInputChange}
             className="border rounded-md px-2 py-1 mb-2 w-full"
           />
@@ -46,7 +67,7 @@ function CourseModal({ course, closeModal, updateCourse }) {
           <input
             type="text"
             name="detail"
-            value={updatedCourse.detail}
+            value={createWorkshop.detail}
             onChange={handleInputChange}
             className="border rounded-md px-2 py-1 mb-2 w-full"
           />
@@ -56,7 +77,7 @@ function CourseModal({ course, closeModal, updateCourse }) {
           <input
             type="text"
             name="description"
-            value={updatedCourse.description}
+            value={createWorkshop.description}
             onChange={handleInputChange}
             className="border rounded-md px-2 py-1 mb-2 w-full"
           />
@@ -66,57 +87,73 @@ function CourseModal({ course, closeModal, updateCourse }) {
           <input
             type="text"
             name="trainer"
-            value={updatedCourse.trainer}
+            value={createWorkshop.trainer}
             onChange={handleInputChange}
             className="border rounded-md px-2 py-1 mb-2 w-full"
           />
         </div>
         {/* <div className="flex flex-col gap-y-2">
+        <label className="font-bold">category</label>
+        <input
+          type="number"
+          name="category_id"
+          value={createWorkshop.category_id}
+          onChange={handleInputChange}
+          className="border rounded-md px-2 py-1 mb-2 w-full"
+        />
+      </div> */}
+
+        <div className="flex flex-col gap-y-2">
           <label className="font-bold">Category</label>
-          <input
-            type="text"
-            name="category"
-            value={updatedCourse.category}
+          <select
+            name="category_id"
+            value={createWorkshop.category_id}
             onChange={handleInputChange}
             className="border rounded-md px-2 py-1 mb-2 w-full"
-          />
-        </div> */}
-        {/* <div className="flex flex-col gap-y-2">
-          <label className="font-bold">Price</label>
-          <input
-            type="text"
+          >
+            <option value={3}>Onsite</option>
+            <option value={4}>Online</option>
+          </select>
+        </div>
+        <div className="flex flex-col gap-y-2">
+          <label className="font-bold">Paid</label>
+          <select
             name="is_paid"
-            value={updatedCourse.is_paid}
+            value={createWorkshop.is_paid}
             onChange={handleInputChange}
             className="border rounded-md px-2 py-1 mb-2 w-full"
-          />
-        </div> */}
-        {/* <div className="flex flex-col gap-y-2">
+          >
+            <option value="true">Paid</option>
+            <option value="false">Free</option>
+          </select>
+        </div>
+
+        <div className="flex flex-col gap-y-2">
           <label className="font-bold">Image</label>
           <input
             type="file"
             name="image"
-            value={updatedCourse.image}
-            onChange={handleInputChange}
-            className="border rounded-md px-2 py-1 mb-2 w-full"
+            // value={createWorkshop.image}
+            onChange={handleImageChange}
+            className="bor der rounded-md px-2 py-1 mb-2 w-full"
           />
-        </div> */}
-        {/* <div className="flex flex-col gap-y-2">
-          <label className="font-bold">Rate</label>
+        </div>
+        <div className="flex flex-col gap-y-2">
+          <label className="font-bold">Address</label>
           <input
             type="text"
-            name="rate"
-            value={updatedCourse.rate}
+            name="site"
+            value={createWorkshop.site}
             onChange={handleInputChange}
             className="border rounded-md px-2 py-1 mb-2 w-full"
           />
-        </div> */}
+        </div>
         <div className="flex flex-col gap-y-2">
           <label className="font-bold">Start Time</label>
           <input
-            type="date"
+            type="datetime-local"
             name="start_time"
-            value={updatedCourse.start_time}
+            value={createWorkshop.start_time}
             onChange={handleInputChange}
             className="border rounded-md px-2 py-1 mb-2 w-full"
           />
@@ -124,9 +161,9 @@ function CourseModal({ course, closeModal, updateCourse }) {
         <div className="flex flex-col gap-y-2">
           <label className="font-bold">End Time</label>
           <input
-            type="date"
+            type="datetime-local"
             name="end_time"
-            value={updatedCourse.end_time}
+            value={createWorkshop.end_time}
             onChange={handleInputChange}
             className="border rounded-md px-2 py-1 mb-2 w-full"
           />
@@ -136,7 +173,7 @@ function CourseModal({ course, closeModal, updateCourse }) {
             onClick={handleUpdate}
             className="bg-indigo-950 text-white px-4 py-2 rounded-md mr-2 hover:bg-indigo-900"
           >
-            Update
+            Create
           </button>
           <button
             onClick={closeModal}
@@ -145,11 +182,9 @@ function CourseModal({ course, closeModal, updateCourse }) {
             Close
           </button>
         </div>
-        {/* ... Other input fields for editing other details */}
-        {/* <button onClick={handleSubmit}>Update Course</button> */}
       </div>
     </div>
   );
 }
 
-export default CourseModal;
+export default CreateWorkshop;

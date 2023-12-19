@@ -13,7 +13,7 @@ const CARD_ELEMENT_OPTIONS = {
       },
     },
     invalid: {
-      color: "#e5424d",
+      color: "#181d5e",
       ":focus": {
         color: "#303238",
       },
@@ -24,7 +24,6 @@ const CARD_ELEMENT_OPTIONS = {
 function CardSection() {
   return (
     <label>
-      Card details
       <CardElement options={CARD_ELEMENT_OPTIONS} />
     </label>
   );

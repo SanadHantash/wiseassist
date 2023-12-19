@@ -122,8 +122,9 @@ const register = async (req, res) => {
   
     
       res.json({ id: session.id });
-      await User.checkconfirm(userID);
-  
+      if (session.success_url === 'https://localhost:3000/success') {
+        User.checkconfirm(userID);
+      }
     } catch (error) {
       console.error(error);
       return res.status(500).json({ success: false, error: 'Payment failed' });

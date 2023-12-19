@@ -5,6 +5,11 @@ import work2 from "../assets/work2.jpg";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import Comment from "../Components/Comment";
+import { useAuth } from "../Context/AuthContext";
+import { useCookies } from "react-cookie";
+
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 function WorkshopDetails() {
   useEffect(() => {
@@ -13,6 +18,37 @@ function WorkshopDetails() {
   }, []);
   const [workshopData, setWorkshopData] = useState([]);
   let { id } = useParams();
+  const { headers } = useAuth();
+  const navigate = useNavigate();
+  const handleEnroll = async () => {
+    try {
+      const enrollmentData = {
+        courseId: id,
+      };
+
+      const enrollResponse = await axios.post(
+        `http://localhost:8080/courseregister/${id}`,
+        enrollmentData,
+        { headers }
+      );
+      Swal.fire({
+        icon: "success",
+        title: "Enrollment Successful!",
+        text: "You have successfully enrolled in the course.",
+      });
+
+      console.log("Enrollment Response:", enrollResponse.data);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Enrollment Failed",
+        text: "Yoy Have to subscribe :) ",
+      }).then(() => {
+        navigate("/pricing");
+      });
+    }
+  }; // Missing closing brace for handleEnroll function
+
   useEffect(() => {
     const fetchWorkshopDetails = async () => {
       try {
@@ -20,7 +56,7 @@ function WorkshopDetails() {
           `http://localhost:8080/elderlies/detail/${id}`
         );
         setWorkshopData(response.data);
-        console.log("API response:", response.data); // Log the response data
+        console.log("API response:", response.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -29,7 +65,6 @@ function WorkshopDetails() {
     fetchWorkshopDetails();
   }, [id]);
 
-  console.log("workshopData:", workshopData);
   return (
     <>
       <Header />
@@ -71,12 +106,12 @@ function WorkshopDetails() {
                     : "Detail Not Available"}
                 </p>
 
-                <a
-                  href="/"
+                <button
+                  onClick={handleEnroll}
                   class="px-4 py-3 text-indigo-950 transition-all transform border border-indigo-950 hover:bg-indigo-950  hover:text-gray-100"
                 >
-                  Discover more
-                </a>
+                  Enroll Now
+                </button>
               </div>
               <div></div>
             </div>

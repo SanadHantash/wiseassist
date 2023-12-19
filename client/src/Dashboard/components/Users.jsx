@@ -14,15 +14,15 @@ function Users() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/users")
+      .get("http://localhost:8080/dashboard/allusers")
       .then((response) => {
-        setUsers(response.data);
+        setUsers(response.data.users);
       })
       .catch((error) => {
         console.error("Error fetching data: ", error);
       });
   }, []);
-
+  console.log(users);
   const updateUser = (updatedUserData) => {
     const updatedUsers = users.map((u) =>
       u.id === updatedUserData.id ? updatedUserData : u
@@ -40,16 +40,16 @@ function Users() {
       user_name = "",
       email = "",
       phonenumber = "",
-    } = user;
+    } = user || {};
 
     const searchTermLower = searchTerm.toLowerCase();
 
     return (
-      first_name.toLowerCase().includes(searchTermLower) ||
-      last_name.toLowerCase().includes(searchTermLower) ||
-      user_name.toLowerCase().includes(searchTermLower) ||
-      email.toLowerCase().includes(searchTermLower) ||
-      phonenumber.toLowerCase().includes(searchTermLower)
+      first_name?.toLowerCase().includes(searchTermLower) ||
+      last_name?.toLowerCase().includes(searchTermLower) ||
+      user_name?.toLowerCase().includes(searchTermLower) ||
+      email?.toLowerCase().includes(searchTermLower) ||
+      phonenumber?.toLowerCase().includes(searchTermLower)
     );
   });
 

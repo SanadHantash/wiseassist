@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
+// import { withRouter } from "react-router-dom";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { useAuth } from "../Context/AuthContext";
-import {useCookies} from "react-cookie";
+import { useCookies } from "react-cookie";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 function Coursesdetails() {
-  const [cookies] = useCookies(['token']);
+  const [cookies] = useCookies(["token"]);
   const token = cookies.Token;
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -36,9 +39,9 @@ function Coursesdetails() {
   useEffect(() => {
     const fetchCourseLessons = async () => {
       try {
-        axios.defaults.headers.common['Authorization'] = token
+        axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(
-         ` http://localhost:8080/course/${id}/allessons`
+          ` http://localhost:8080/course/${id}/allessons`
         );
         setCourseLessons(response.data);
         console.log("Course Lessons API response:", response.data);
@@ -49,6 +52,35 @@ function Coursesdetails() {
 
     fetchCourseLessons();
   }, [id]);
+  const navigate = useNavigate();
+  const handleEnroll = async () => {
+    try {
+      const enrollmentData = {
+        courseId: id,
+      };
+
+      const enrollResponse = await axios.post(
+        `http://localhost:8080/courseregister/${id}`,
+        enrollmentData,
+        { headers }
+      );
+      Swal.fire({
+        icon: "success",
+        title: "Enrollment Successful!",
+        text: "You have successfully enrolled in the course.",
+      });
+
+      console.log("Enrollment Response:", enrollResponse.data);
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Enrollment Failed",
+        text: "Yoy Have to subscribe :) ",
+      }).then(() => {
+        navigate("/pricing");
+      });
+    }
+  };
   return (
     <>
       <Header />
@@ -77,6 +109,12 @@ function Coursesdetails() {
                 ? courseDetails.course[0].detail
                 : "Details Not Available"}
             </p>
+            <button
+              onClick={handleEnroll}
+              class="px-4 py-3 text-indigo-950 transition-all transform border border-indigo-950 hover:bg-indigo-950  hover:text-gray-100"
+            >
+              Enroll Now
+            </button>
           </div>
         </div>
 

@@ -7,6 +7,7 @@ import SearchBar from "../Components/SearchBar";
 import { Link } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
+import { useNavigate } from "react-router-dom";
 
 function Workshops() {
   useEffect(() => {
