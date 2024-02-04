@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-
+import { useAuth } from "../Context/AuthContext";
+import { useCookies } from "react-cookie";
 // import facebook from "../assets/facebook.webp";
 // import { Link } from "react-router-dom";
 
@@ -10,6 +11,8 @@ import Footer from "../Components/Footer";
 import CommentTechTips from "../Components/CommentTechTips";
 
 function TipDetail() {
+  const [cookies] = useCookies(["token"]);
+  const token = cookies.Token;
   useEffect(() => {
     window.scrollTo(0, 0);
     <></>;
@@ -19,6 +22,7 @@ function TipDetail() {
   useEffect(() => {
     const fetchTechDetails = async () => {
       try {
+        axios.defaults.headers.common["Authorization"] = token;
         const response = await axios.get(
           `http://localhost:8080/techtipdetail/${id}`
         );
@@ -35,7 +39,6 @@ function TipDetail() {
   console.log("techTipData:", posts);
   return (
     <>
-      <Header />
       <div style={{ width: "100%" }}>
         <div class=" flex justify-center ">
           <div class="px-4 sm:px-6 lg:px-8 w-full lg:w-3/4 ">
@@ -73,14 +76,8 @@ function TipDetail() {
                   <p class="text-3xl text-gray-800 dark:text-gray-200">
                     {posts.course && posts.course[0].short_detail
                       ? posts.course[0].short_detail
-                      : "Title Not Available"}
+                      : "Short_detail Not Available"}
                   </p>
-
-                  {/* <p class="text-lg text-gray-800 dark:text-gray-200">
-                    {posts.course && posts.course[0].detail
-                      ? posts.course[0].detail
-                      : "Title Not Available"}
-                  </p> */}
 
                   <div class="text-center">
                     <div class="grid lg:grid-cols-1 gap-3">
@@ -102,26 +99,26 @@ function TipDetail() {
 
                   <blockquote class="text-center p-4 sm:px-7"></blockquote>
 
-                  <div class="space-y-3">
-                    <h3 class="text-2xl font-semibold dark:text-white">
-                      Here's how to hide memories in the Facebook mobile app.{" "}
-                    </h3>
-                  </div>
-
-                  <p class="text-lg text-gray-800 dark:text-gray-200">
+                  <p className="text-lg text-gray-800 dark:text-gray-200">
                     {posts.course && posts.course[0].detail
                       ? posts.course[0].detail
+                          .split("\n")
+                          .map((item, index) => (
+                            <span key={index}>
+                              {item}
+                              <br />
+                            </span>
+                          ))
                       : "Title Not Available"}
                   </p>
                   <hr />
-                  <CommentTechTips techtipsId={posts && posts.id} />
+                  <CommentTechTips />
                 </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

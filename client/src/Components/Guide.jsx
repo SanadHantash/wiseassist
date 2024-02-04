@@ -5,7 +5,7 @@ function Guide() {
     <section>
       <div
         class=" text-indigo-950 py-8"
-        style={{ backgroundColor: "#F7F1EE " }}
+        style={{ backgroundColor: "#d5c5df " }}
       >
         <div class="container mx-auto  mb-10 flex flex-col items-start md:flex-row my-12 md:my-24">
           <div class="flex flex-col w-full sticky md:top-36 lg:w-1/3 mt-2 md:mt-12 px-8">
@@ -18,9 +18,6 @@ function Guide() {
               creating modern, responsive websites tailored to your unique
               business needs.
             </p>
-            <button class="bg-indigo-950 mr-auto hover:text-indigo-950 text-white rounded shadow hover:shadow-lg py-2 px-4 border text-indigo-950 hover:bg-white">
-              Explore Now
-            </button>
           </div>
           <div class="ml-0 md:ml-12 lg:w-2/3 sticky">
             <div class="container mx-auto w-full h-full">

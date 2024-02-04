@@ -1,8 +1,8 @@
 const db = require("../config");
-const {storage } = require("../firebase");
+const { admin, storage } = require("../firebase");
 const Course = {};
 
-Course.allcourses = async () => {
+Course.allelderliescourses = async () => {
   try {
     const queryResult = await db.query(`
       SELECT 
@@ -14,7 +14,10 @@ Course.allcourses = async () => {
         categories.category,
         courses.start_time,
         courses.end_time,
-        courses.site
+        courses.site,
+        courses.seats,
+        courses.is_paid,
+        courses.is_deleted
       FROM 
         courses
         INNER JOIN categories ON categories.id = courses.category_id
@@ -48,6 +51,7 @@ Course.allcourses = async () => {
           expires: "01-01-2500",
         });
         row.image = url;
+        row.is_paid = row.is_paid ? "Paid" : "Free";
 
         return row;
       })
@@ -59,7 +63,7 @@ Course.allcourses = async () => {
   }
 };
 
-Course.allworkshops = async () => {
+Course.allelderliesworkshops = async () => {
   try {
     const queryResult = await db.query(`
       SELECT 
@@ -71,7 +75,9 @@ Course.allworkshops = async () => {
         categories.category,
         courses.start_time,
         courses.end_time,
-        courses.site
+        courses.site,
+        courses.is_paid,
+        courses.is_deleted
       FROM 
         courses
         INNER JOIN categories ON categories.id = courses.category_id
@@ -107,7 +113,7 @@ Course.allworkshops = async () => {
           expires: "01-01-2500",
         });
         row.image = url;
-
+        row.is_paid = row.is_paid ? "Paid" : "Free";
         return row;
       })
     );
@@ -117,6 +123,7 @@ Course.allworkshops = async () => {
     throw err;
   }
 };
+
 
 Course.detail = async (courseId) => {
   try {
@@ -133,7 +140,8 @@ Course.detail = async (courseId) => {
           courses.start_time,
           courses.end_time,
           courses.site,
-          courses.is_paid
+          courses.is_paid,
+          courses.seats
         FROM 
           courses
           INNER JOIN categories ON categories.id = courses.category_id
@@ -171,7 +179,7 @@ Course.detail = async (courseId) => {
           expires: "01-01-2500",
         });
         row.image = url;
-
+        row.is_paid = row.is_paid ? "Paid" : "Free";
         return row;
       })
     );
@@ -194,12 +202,12 @@ Course.alllessonspaidauth = async (userID,courseID) => {
         const userRole = userRoleResult.rows[0].role;
         if (userRole === "subscriber") {
           result = await db.query(
-            "SELECT lesson.id, lesson.title, REPLACE(lesson_image.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image FROM lesson INNER JOIN courses ON courses.id = lesson.course_id INNER JOIN lesson_image ON lesson.id = lesson_image.lesson_id WHERE courses.id = $1 AND lesson.is_deleted = false;",
+            "SELECT lesson.id, lesson.title, REPLACE(lesson.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image FROM lesson INNER JOIN courses ON courses.id = lesson.course_id WHERE courses.id = $1 AND lesson.is_deleted = false;",
             [courseID]
           );
         } else if (userRole === "unsubscriber") {
           result = await db.query(
-            "SELECT lesson.id, lesson.title, REPLACE(lesson_image.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image FROM lesson INNER JOIN courses ON courses.id = lesson.course_id INNER JOIN lesson_image ON lesson.id = lesson_image.lesson_id WHERE courses.id = $1 AND lesson.is_deleted = false limit 2;",
+            "SELECT lesson.id, lesson.title, REPLACE(lesson.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image FROM lesson INNER JOIN courses ON courses.id = lesson.course_id WHERE courses.id = $1 AND lesson.is_deleted = false limit 2;",
             [courseID]
           );
         }
@@ -248,8 +256,8 @@ Course.alllessonspaidauth = async (userID,courseID) => {
 
 Course.alllessonspaid = async (courseID) => {
   try {
-      const result = await db.query(
-        "SELECT lesson.id, lesson.title, REPLACE(lesson_image.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image FROM lesson INNER JOIN courses ON courses.id = lesson.course_id INNER JOIN lesson_image ON lesson.id = lesson_image.lesson_id WHERE courses.id = $1 AND lesson.is_deleted = false limit 2;",
+       const result = await db.query(
+        "SELECT lesson.id, lesson.title, REPLACE(lesson.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image FROM lesson INNER JOIN courses ON courses.id = lesson.course_id WHERE courses.id = $1 AND lesson.is_deleted = false limit 2;",
         [courseID]
       );
 
@@ -268,17 +276,18 @@ Course.alllessonspaid = async (courseID) => {
 
       return formattedResult;
     }
-    catch (err) {
+   catch (err) {
     console.error("Error:", err);
     throw err;
   }
 };
 
 
+
 Course.alllessonsfree = async (courseID) => {
   try {
     const result = await db.query(
-      "SELECT lesson.id, lesson.title, REPLACE(lesson_image.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image FROM lesson INNER JOIN courses ON courses.id = lesson.course_id INNER JOIN lesson_image ON lesson.id = lesson_image.lesson_id WHERE courses.id = $1 AND lesson.is_deleted = false;",
+      "SELECT lesson.id, lesson.title, REPLACE(lesson.image, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/images/', '') AS image FROM lesson INNER JOIN courses ON courses.id = lesson.course_id WHERE courses.id = $1 AND lesson.is_deleted = false;",
       [courseID]
     );
 
@@ -308,8 +317,7 @@ Course.lessonpage = async (lessonID) => {
       SELECT 
         lesson.id,
         lesson.title,
-        REPLACE(lesson.video, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/videos/', '') AS video,
-        lesson.description
+        REPLACE(lesson.video, 'https://storage.googleapis.com/wiseassist-b8a8a.appspot.com/videos/', '') AS video
       FROM lesson
       WHERE lesson.id = $1 and  lesson.is_deleted = false;
     `,
@@ -333,28 +341,7 @@ Course.lessonpage = async (lessonID) => {
   }
 };
 
-Course.addratetocourse = async (courseID, userID, rate) => {
-  try {
-    const insertrating = await db.query(
-      `
-            INSERT INTO course_reaction (rate, user_id, course_id) VALUES ($1, $2, $3) RETURNING rate
-            `,
-      [rate, userID, courseID]
-    );
 
-    insertrating.rows[0].rate;
-
-    const result = await db.query(
-      "UPDATE courses SET rate= (SELECT AVG(rate) FROM course_reaction WHERE course_id = $1) WHERE id = $1 RETURNING *",
-      [courseID]
-    );
-
-    return result;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
 
 Course.addcommenttocourse = async (courseID, userID, comment) => {
   try {
@@ -382,28 +369,6 @@ Course.getcoursecomments = async (courseID) => {
   }
 };
 
-Course.addratetolesson = async (lessonID, userID, rate) => {
-  try {
-    const insertrating = await db.query(
-      `
-            INSERT INTO lesson_reaction (rate, user_id, lesson_id) VALUES ($1, $2, $3) RETURNING rate
-            `,
-      [rate, userID, lessonID]
-    );
-
-    insertrating.rows[0].rate;
-
-    const result = await db.query(
-      "UPDATE lesson SET rate= (SELECT AVG(rate) FROM lesson_reaction WHERE lesson_id = $1) WHERE id = $1 RETURNING *",
-      [lessonID]
-    );
-
-    return result;
-  } catch (error) {
-    console.error(error);
-    throw error;
-  }
-};
 
 Course.addcommenttolesson = async (lessonID, userID, comment) => {
   try {

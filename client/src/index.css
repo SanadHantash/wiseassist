@@ -2,19 +2,31 @@
 @tailwind components;
 @tailwind utilities;
 
-/* body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.course-lessons-section {
+  position: sticky;
+  top: 20px; /* Adjust as needed */
+  z-index: 10;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
-} */
+@media (max-width: 1024px) {
+  .course-lessons-section {
+    top: 80px; /* Adjust as needed */
+  }
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Kalnia&family=Kumar+One+Outline&family=Oswald&family=Playfair+Display&family=Source+Code+Pro:wght@500&display=swap");
+
+.hero_font {
+  font-family: "Oswald";
+  -webkit-text-stroke-width: 1.5px;
+  -webkit-text-stroke-color: rgb(82, 40, 131);
+}
+
+@import url("https://fonts.googleapis.com/css2?family=Abril+Fatface&family=Bebas+Neue&family=Kalnia&family=Kumar+One+Outline&family=Oswald&family=Playfair+Display&family=Source+Code+Pro:wght@500&display=swap");
+.font_heading {
+  font-family: "Bebas Neue";
+}
+
 .sidebar.widget {
   background: #f2f2f2;
   border: 1px solid #ddd;

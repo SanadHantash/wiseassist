@@ -2,17 +2,21 @@ import React, { useState, useEffect } from "react";
 import Header from "../Components/Header";
 import Footer from "../Components/Footer";
 import { Link } from "react-router-dom";
-
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutForm from "../Components/CheckoutForm";
 function Subscribe() {
   useEffect(() => {
     window.scrollTo(0, 0);
     <></>;
   }, []);
+  const stripePromise = loadStripe(
+    "pk_test_51O6ir2JHXfBpbbMkPbKEGUGpcDt2kKbOavmI201QuITZ8F3Y48KGAOPE3hvYfSuJcIdhDa8gk7KvAW2FeiwBDPF5004smsWbGA"
+  );
   return (
     <>
-      <Header />
-      <div class="bg-white dark:bg-gray-900">
-        <div class="container px-6 py-8 mx-auto">
+      <div class="bg-white ">
+        <div class="container px-6 py-20 mx-auto">
           <div class="xl:items-center xl:-mx-8 xl:flex">
             <div class="flex flex-col items-center xl:items-start xl:mx-8">
               <h1 class="text-3xl font-medium text-gray-800 capitalize lg:text-4xl dark:text-white">
@@ -28,39 +32,15 @@ function Subscribe() {
               <p class="mt-4 font-medium text-gray-500 dark:text-gray-300">
                 You can get All Access by selecting your plan!
               </p>
-
-              <a
-                href="/"
-                class="flex items-center mt-4 -mx-1 text-sm text-gray-700 capitalize dark:text-blue-400 hover:underline hover:text-blue-600 dark:hover:text-blue-500"
-              >
-                <span class="mx-1">read more</span>
-                <svg
-                  class="w-4 h-4 mx-1"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  ></path>
-                </svg>
-              </a>
             </div>
 
             <div class="flex-1 xl:mx-8">
               <div class="mt-8 space-y-8 md:-mx-4 md:flex md:items-center md:justify-center md:space-y-0 xl:mt-0">
-                <div class="max-w-sm mx-auto border rounded-lg md:mx-4 dark:border-gray-700">
+                <div class="w-full border rounded-lg md:mx-4 dark:border-gray-700">
                   <div class="p-6">
                     <h1 class="text-xl font-medium text-gray-700 capitalize lg:text-3xl dark:text-white">
                       Free
                     </h1>
-
-                    <p class="mt-4 text-gray-500 dark:text-gray-300">
-                      Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                      Nostrum quam voluptatibus
-                    </p>
 
                     <h2 class="mt-4 text-2xl font-medium text-gray-700 sm:text-4xl dark:text-gray-300">
                       $0.00 <span class="text-base font-medium">/Month</span>
@@ -163,28 +143,25 @@ function Subscribe() {
                   </div>
                 </div>
 
-                <div class="max-w-sm mx-auto border rounded-lg md:mx-4 dark:border-gray-700">
-                  <div class="p-6">
-                    <h1 class="text-xl font-medium text-gray-700 capitalize lg:text-3xl dark:text-white">
+                <div className="w-full border rounded-lg md:mx-4 dark:border-gray-700">
+                  <div className="p-6">
+                    <h1 className="text-xl font-medium text-gray-700 capitalize lg:text-3xl dark:text-white">
                       Premium
                     </h1>
 
-                    <p class="mt-4 text-gray-500 dark:text-gray-300">
-                      Lorem ipsum dolor sit amet consectetur, adipisicing elit.
-                      Nostrum quam voluptatibus
-                    </p>
-
-                    <h2 class="mt-4 text-2xl font-medium text-gray-700 sm:text-4xl dark:text-gray-300">
-                      $50.00{" "}
-                      <span class="text-base font-medium">/life time</span>
+                    <h2 className="mt-4 text-2xl font-medium text-gray-700 sm:text-4xl dark:text-gray-300">
+                      $70.00{" "}
+                      <span className="text-base font-medium">/Monthly</span>
                     </h2>
 
-                    <p class="mt-1 text-gray-500 dark:text-gray-300">
-                      One time payment
+                    <p className="mt-1 text-gray-500 dark:text-gray-300">
+                      Monthly payment
                     </p>
 
-                    <button class="w-full px-4 py-2 mt-6 tracking-wide text-white capitalize transition-colors duration-200 transform bg-indigo-900 rounded-md hover:bg-indigo-950 focus:outline-none focus:bg-blue-500 focus:ring focus:ring-blue-300 focus:ring-opacity-80">
-                      Start Now
+                    <button className="w-full  ">
+                      <Elements stripe={stripePromise}>
+                        <CheckoutForm />
+                      </Elements>
                     </button>
                   </div>
 
@@ -279,7 +256,6 @@ function Subscribe() {
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

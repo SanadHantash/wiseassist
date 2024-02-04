@@ -3,7 +3,7 @@ const { admin, storage } = require('../firebase');
 const Home = {};
 
 
-Home.allcourses = async () => {
+Home.allelderliescourses = async () => {
     try {
       const queryResult = await db.query(`
       SELECT 
@@ -30,8 +30,7 @@ Home.allcourses = async () => {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
-            day: 'numeric',
-            hour: 'numeric',
+            day: 'numeric'
           });
 
           
@@ -42,8 +41,7 @@ Home.allcourses = async () => {
               weekday: 'long',
               year: 'numeric',
               month: 'long',
-              day: 'numeric',
-              hour: 'numeric',
+              day: 'numeric'
             });
           }
           
@@ -64,7 +62,7 @@ Home.allcourses = async () => {
   };
 
   
-Home.allworkshops = async () => {
+Home.allelderliesworkshops = async () => {
     try {
       const queryResult = await db.query(`
       SELECT 

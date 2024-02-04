@@ -12,6 +12,7 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(true);
     setHeaders({ token: Token });
   };
+
   const register = (Token) => {
     setIsRegistered(true);
     setHeaders({ token: Token });
@@ -25,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     setIsLoggedIn(!!Cookies.get("Token"));
     setIsRegistered(!!Cookies.get("Token"));
-  }, []);
+  }, [isLoggedIn, isRegistered]);
 
   return (
     <AuthContext.Provider

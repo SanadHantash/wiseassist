@@ -10,7 +10,6 @@ function NotFound() {
   }, []);
   return (
     <>
-      <Header />
       <div class="bg-white h-screen justify-center">
         <center class="mt-24 m-auto">
           <svg
@@ -133,7 +132,6 @@ function NotFound() {
           </a>
         </center>
       </div>
-      <Footer />{" "}
     </>
   );
 }

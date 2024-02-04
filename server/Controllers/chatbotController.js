@@ -5,43 +5,42 @@ const path = require("path");
 const manager = new NlpManager({ languages: ["en"] });
 
 const trainAndSave = () => {
-    const intentsPath = path.join(__dirname, "../intents");
-    
-    const files = fs.readdirSync(intentsPath);
+  const intentsPath = path.join(__dirname, "../intents");
 
-    for (const file of files) {
-        const filePath = path.join(intentsPath, file);
-        const data = fs.readFileSync(filePath);
-        const intent = path.basename(file, ".json");
+  const files = fs.readdirSync(intentsPath);
 
-        const { questions, answers } = JSON.parse(data);
+  for (const file of files) {
+    const filePath = path.join(intentsPath, file);
+    const data = fs.readFileSync(filePath);
+    const intent = path.basename(file, ".json");
 
-        for (const question of questions) {
-            manager.addDocument("en", question, intent);
-        }
+    const { questions, answers } = JSON.parse(data);
 
-        for (const answer of answers) {
-            manager.addAnswer("en", intent, answer);
-        }
+    for (const question of questions) {
+      manager.addDocument("en", question, intent);
     }
 
-    return manager.train();
+    for (const answer of answers) {
+      manager.addAnswer("en", intent, answer);
+    }
+  }
+
+  return manager.train();
 };
 
-
 const processMessages = async (messages) => {
-    await manager.load();
-    const responses = [];
+  await manager.load();
+  const responses = [];
 
-    for (const message of messages) {
-        const response = await manager.process("en", message);
-        responses.push({ question: message, answer: response.answer });
-    }
+  for (const message of messages) {
+    const response = await manager.process("en", message);
+    responses.push(response.answer);
+  }
 
-    return responses;
+  return responses;
 };
 
 module.exports = {
-    trainAndSave,
-    processMessages,
+  trainAndSave,
+  processMessages,
 };

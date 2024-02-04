@@ -1,45 +1,23 @@
 const FAQ = require ('../Models/faqModel');
 
-const addquestion = async (req, res) => {
-  try {
-      const userID = req.user.userId;
-      const { question } = req.body;
-      
-      try {
-          const result = await FAQ.addquestion(userID, question);
-          return res.status(201).json({ success: true, message: 'Question added successfully', data: result });
-      } catch (err) {
-          if (err.message === 'Question already exists for this user') {
-              return res.status(400).json({ success: false, error: 'Question already exists for this user' });
-          } else {
-              throw err;
-          }
-      }
-  } catch (err) {
-      console.error(err);
-      res.status(500).json({ success: false, error: 'Internal Server Error' });
-  }
-};
-
-
   
-  const allansweredquestions = async(req,res)=>{
+  const allfaq = async(req,res)=>{
     try{
-      const question = await FAQ.allansweredquestions();
+      const question = await FAQ.allfaq();
 
 
       res.status(200).json(question); 
     }
     catch (err) {
       console.error(err);
-      res.status(400).json({ success: false, error: 'Error in getting questions' });
+      res.status(400).json({ success: false, error: 'Error in getting faq' });
     }
   }
 
   const answer = async (req,res) => {
     try{
-          const questionID = req.params.id;
-          const answer = await FAQ.answer(questionID);
+          const faqID = req.params.id;
+          const answer = await FAQ.answer(faqID);
           res.status(201).json(answer); 
     } catch (err) {
       console.error(err);
@@ -48,7 +26,6 @@ const addquestion = async (req, res) => {
   }
 
 module.exports = {
-    addquestion,
-    allansweredquestions,
+    allfaq,
     answer
 }

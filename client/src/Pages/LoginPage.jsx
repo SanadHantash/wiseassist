@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import background from "../assets/background.png";
 import FormHeader from "../Components/FormHeader";
-import Header from "../Components/Header";
+
 import { useAuth } from "../Context/AuthContext";
+
+import GoolgeSignInButton from "../Components/GoogleSignup";
 
 const LoginPage = () => {
   const { isLoggedIn, login, logout } = useAuth();
@@ -13,6 +16,11 @@ const LoginPage = () => {
     email: "",
     password: "",
   });
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,25 +42,23 @@ const LoginPage = () => {
       const { token } = response.data || {};
       if (token) {
         Cookies.set("Token", token);
-        login();
+        login(token);
         console.log("Login successful", response.data);
         navigate("/");
       } else {
         console.error("Token not found in response");
       }
-
-      // Handle successful login
     } catch (error) {
       console.error("Error logging in", error);
-      // Handle login error
-      alert("Password or Email wrong");
+
+      if (error.response && error.response.data && error.response.data.errors) {
+        setError(error.response.data.errors);
+      }
     }
   };
-  // const handleButtonClick = () => {};
 
   return (
     <>
-      <Header />
       <div
         className="min-h-full flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8"
         style={{
@@ -60,7 +66,7 @@ const LoginPage = () => {
           backgroundSize: "cover",
         }}
       >
-        <div className="max-w-md w-full space-y-8">
+        <div className="max-w-md mt-20  w-full space-y-8">
           <section className="bg-gray-50 dark:bg-gray-900">
             <div class="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
               <div class="p-6 space-y-4 md:space-y-6 sm:p-8">
@@ -89,11 +95,13 @@ const LoginPage = () => {
                         placeholder="name@gmail.com"
                         required=""
                       />
-                      {/* {errors.email && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.email}
-                        </p>
-                      )} */}
+                      {error !== null && error.includes("email") && (
+                        <div className="bg-red-100 border mt-3 border-red-400 text-red-700 px-4 py-2 rounded-md mb-4">
+                          <p className="text-sm">
+                            Invalid Email, Please try again.
+                          </p>
+                        </div>
+                      )}
                     </div>
                     <div>
                       <label
@@ -112,30 +120,22 @@ const LoginPage = () => {
                         class="rounded-md appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-900 focus:border-indigo-900 focus:z-10 sm:text-sm"
                         required=""
                       />
-                      {/* {errors.password && (
-                        <p className="text-red-500 text-xs mt-1">
-                          {errors.password}
-                        </p>
-                      )} */}
+                      {error !== null && error.includes("password") && (
+                        <div className="bg-red-100 border mt-3 border-red-400 text-red-700 px-4 py-2 rounded-md mb-4">
+                          <p className="text-sm">
+                            Invalid Password, Please try again.
+                          </p>
+                        </div>
+                      )}
                     </div>
                     <div class="flex items-center justify-between">
                       <div class="flex items-start">
-                        <div class="flex items-center h-5">
-                          <input
-                            id="remember"
-                            aria-describedby="remember"
-                            type="checkbox"
-                            class="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                            required=""
-                          />
-                        </div>
                         <div class="ml-3 text-sm">
-                          <label
-                            for="remember"
-                            class="text-gray-500 dark:text-gray-300"
-                          >
-                            Remember me
-                          </label>
+                          <Link to="/emailForgot">
+                            <button class="text-gray-500 dark:text-gray-300">
+                              Forgot your password?
+                            </button>
+                          </Link>
                         </div>
                       </div>
                     </div>
@@ -148,6 +148,7 @@ const LoginPage = () => {
                       </span>
                     </button>
                   </form>
+                  <GoolgeSignInButton />
                 </div>
               </div>
             </div>

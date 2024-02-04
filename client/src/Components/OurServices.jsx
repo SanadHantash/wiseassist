@@ -18,40 +18,39 @@ function OurServices() {
         <div class="flex flex-col w-full mb-10 sm:flex-row">
           <div data-aos="fade-up" class="w-full mb-10 sm:mb-0 sm:w-1/2">
             <div class="relative h-full ml-0 mr-0 sm:mr-10">
-              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-indigo-500 rounded-lg"></span>
-              <div class="relative h-full p-5 bg-white border-2 border-indigo-500 rounded-lg">
+              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-[#522883] rounded-lg"></span>
+              <div class="relative h-full p-5 bg-white border-2 border-[#522883] rounded-lg">
                 <div class="flex items-center -mt-1">
                   <h3 class="my-2 ml-3 text-lg font-bold text-gray-800">
-                    Tech Support and Troubleshooting
+                    Digital Literacy Training
                   </h3>
                 </div>
-                <p class="mt-3 mb-1 text-xs font-medium text-indigo-500 uppercase">
+                <p class="mt-3 mb-1 text-xs font-medium text-[#522883] uppercase">
                   ------------
                 </p>
                 <p class="mb-2 text-gray-600">
-                  Support sections or resources offering solutions and
-                  troubleshooting guides for common problems users face with
-                  their gadgets
+                  Provide training and resources to improve digital literacy,
+                  covering topics like using social media, online shopping, and
+                  video conferencing.
                 </p>
               </div>
             </div>
           </div>
           <div data-aos="fade-up" class="w-full sm:w-1/2">
             <div class="relative h-full ml-0 md:mr-10">
-              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-indigo-700 rounded-lg"></span>
-              <div class="relative h-full p-5 bg-white border-2 border-indigo-700 rounded-lg">
+              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-[#522883] rounded-lg"></span>
+              <div class="relative h-full p-5 bg-white border-2 border-[#522883] rounded-lg">
                 <div class="flex items-center -mt-1">
                   <h3 class="my-2 ml-3 text-lg font-bold text-gray-800">
-                    Accessories and Add-ons
+                    FAQ Service
                   </h3>
                 </div>
-                <p class="mt-3 mb-1 text-xs font-medium text-indigo-700 uppercase">
+                <p class="mt-3 mb-1 text-xs font-medium text-[#522883] uppercase">
                   ------------
                 </p>
                 <p class="mb-2 text-gray-600">
-                  Recommendations and information on accessories, peripherals,
-                  and add-ons that complement various gadgets, enhancing the
-                  user experience.
+                  Our FAQ section aims to simplify complex tech-related
+                  questions with easy-to-understand explanations.
                 </p>
               </div>
             </div>
@@ -60,59 +59,54 @@ function OurServices() {
         <div data-aos="fade-up" class="flex flex-col w-full mb-5 sm:flex-row">
           <div class="w-full mb-10 sm:mb-0 sm:w-1/2">
             <div class="relative h-full ml-0 mr-0 sm:mr-10">
-              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-indigo-800 rounded-lg"></span>
-              <div class="relative h-full p-5 bg-white border-2 border-indigo-800 rounded-lg">
+              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-[#522883] rounded-lg"></span>
+              <div class="relative h-full p-5 bg-white border-2 border-[#522883] rounded-lg">
                 <div class="flex items-center -mt-1">
                   <h3 class="my-2 ml-3 text-lg font-bold text-gray-800">
-                    Search and Filter Tools
+                    Customer Testimonials
                   </h3>
                 </div>
-                <p class="mt-3 mb-1 text-xs font-medium text-indigo-800 uppercase">
+                <p class="mt-3 mb-1 text-xs font-medium text-[#522883] uppercase">
                   ------------
                 </p>
                 <p class="mb-2 text-gray-600">
-                  Simple and effective search functionality with filters to
-                  narrow down gadget choices based on price, brand,
-                  specifications, etc
+                  Showcase success stories to build trust and credibility.
                 </p>
               </div>
             </div>
           </div>
           <div data-aos="fade-up" class="w-full mb-10 sm:mb-0 sm:w-1/2">
             <div class="relative h-full ml-0 mr-0 sm:mr-10">
-              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-indigo-900 rounded-lg"></span>
-              <div class="relative h-full p-5 bg-white border-2 border-indigo-900 rounded-lg">
+              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-[#522883] rounded-lg"></span>
+              <div class="relative h-full p-5 bg-white border-2 border-[#522883] rounded-lg">
                 <div class="flex items-center -mt-1">
                   <h3 class="my-2 ml-3 text-lg font-bold text-gray-800">
-                    Newsletter Subscription
+                    Monthly/Annual Plans
                   </h3>
                 </div>
-                <p class="mt-3 mb-1 text-xs font-medium text-indigo-900 uppercase">
+                <p class="mt-3 mb-1 text-xs font-medium text-[#522883] uppercase">
                   ------------
                 </p>
                 <p class="mb-2 text-gray-600">
-                  Offering a newsletter that provides subscribers with the
-                  latest tech news, deals, and updates.
+                  Provide subscription options for ongoing assistance.
                 </p>
               </div>
             </div>
           </div>
           <div data-aos="fade-up" class="w-full sm:w-1/2">
             <div class="relative h-full ml-0 md:mr-10">
-              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-indigo-950 rounded-lg"></span>
-              <div class="relative h-full p-5 bg-white border-2 border-indigo-950 rounded-lg">
+              <span class="absolute top-0 left-0 w-full h-full mt-1 ml-1 bg-[#522883] rounded-lg"></span>
+              <div class="relative h-full p-5 bg-white border-2 border-[#522883] rounded-lg">
                 <div class="flex items-center -mt-1">
                   <h3 class="my-2 ml-3 text-lg font-bold text-gray-800">
-                    Deals and Discounts
+                    Chatbot Services
                   </h3>
                 </div>
-                <p class="mt-3 mb-1 text-xs font-medium text-indigo-950 uppercase">
+                <p class="mt-3 mb-1 text-xs font-medium text-[#522883] uppercase">
                   ------------
                 </p>
                 <p class="mb-2 text-gray-600">
-                  Highlighting special deals, discounts, and offers on gadgets
-                  from various retailers or e-commerce platforms. This helps
-                  users find good deals on their desired gadgets.
+                  Offer a user-friendly chatbot for immediate tech support.
                 </p>
               </div>
             </div>

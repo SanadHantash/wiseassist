@@ -13,7 +13,7 @@ function SearchBar({ onSearch }) {
   };
   return (
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div class="  overflow-hidden bg-white px-6 py-20 text-center sm:px-16 sm:shadow-sm ">
+      <div class="  overflow-hidden bg-white px-6 mt-40 py-5 mb-10  text-center sm:px-16 sm:shadow-sm ">
         <p class="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-gray-900 dark:text-gray-200 sm:text-4xl">
           Empower Your Journey:
           <br /> Dive into Cutting-edge Tech Workshops

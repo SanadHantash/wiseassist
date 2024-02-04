@@ -2,7 +2,11 @@
 module.exports = {
   content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        customPink: "#C3ACD0",
+      },
+    },
   },
   plugins: [
     require("tw-elements/dist/plugin.cjs"),

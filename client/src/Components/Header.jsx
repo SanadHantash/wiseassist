@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import logo2 from "../assets/logo2.png";
+import uk from "../assets/uk.png";
+import ar from "../assets/ar.png";
 import { Link } from "react-router-dom";
 import { useAuth } from "../Context/AuthContext";
 
@@ -12,14 +14,29 @@ function Header() {
   const toggleMobileMenu = () => {
     setMobileMenuOpen(!isMobileMenuOpen);
   };
+  const [isProfileOpen, setProfileOpen] = useState(false);
+
+  const toggleProfileDropdown = () => {
+    setProfileOpen(!isProfileOpen);
+  };
+  const [isLanguageOpen, setLanguageOpen] = useState(false);
+
+  const toggleLanguageDropdown = () => {
+    setLanguageOpen(!isLanguageOpen);
+  };
   return (
     <>
-      <nav class=" relative bg-white  z-20 h-18 border-gray-200 py-2.5 dark:bg-gray-900  w-full ">
-        <div class="flex  justify-between  px-4 mx-auto">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-gray-200 py-2.5 dark:bg-gray-900 w-full">
+        <div class="flex justify-between px-4 mx-auto flex-wrap lg:flex-nowrap">
           <a href="/" class="flex items-center">
-            <img src={logo2} class="h-14 w-48  " alt="WiseAssist Logo" />
+            <img
+              src={logo2}
+              class="h-[3rem] w-[9rem]  "
+              alt="WiseAssist Logo"
+            />
           </a>
           <div class="flex items-center lg:order-2">
+            {" "}
             <div
               className={`${
                 isLoggedIn ? "hidden" : "flex"
@@ -28,7 +45,7 @@ function Header() {
               <Link to="/Login">
                 <button
                   type="button"
-                  className="text-black hover:text-indigo-950 font-medium rounded-lg text-sm px-2 py-2.5 md:ml-1 md:px-10"
+                  className="text-black hover:text-indigo-950 font-medium rounded-lg text-sm px-1 py-2.5 md:ml-1 md:px-10"
                 >
                   Login
                 </button>
@@ -42,29 +59,52 @@ function Header() {
                 </button>
               </Link>
             </div>
-            <Link to="/profile">
+            {/* <Link to="/profile"> */}
+            <div className="relative">
               <button
+                onClick={toggleProfileDropdown}
                 type="button"
                 className={`${
                   isRegistered ? "flex" : "hidden"
-                }  flex-1  justify-end items-center align-center shadow-sm shadow-[#292742] text-white bg-indigo-950 hover:bg-indigo-900 font-medium rounded-lg text-sm px-2 py-2.5 md:ml-1 md:px-10 `}
+                }  flex-1  justify-end items-center align-center  text-indigo-950 font-medium rounded-lg text-sm px-2 py-2.5 md:ml-1 md:px-10 `}
               >
                 Profile
+                <svg
+                  class="w-2.5 h-2.5 ml-2.5"
+                  aria-hidden="true"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 10 6"
+                >
+                  <path
+                    stroke="currentColor"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="m1 1 4 4 4-4"
+                  />
+                </svg>
               </button>
-            </Link>
-            <Link to="/">
-              <button
-                onClick={() => {
-                  logout();
-                }}
-                type="button"
-                className={`${
-                  isLoggedIn ? "flex" : "hidden"
-                }   flex-1  justify-end items-center align-center shadow-sm shadow-[#292742] text-white bg-indigo-950 hover:bg-indigo-900 font-medium rounded-lg text-sm px-2 py-2.5 md:ml-1 md:px-10 `}
-              >
-                Logout
-              </button>
-            </Link>
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 py-2 w-48 bg-white rounded-lg shadow-lg z-10">
+                  <Link to="/profile">
+                    <button className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200">
+                      Profile
+                    </button>
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setProfileOpen(false);
+                    }}
+                    className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-200"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
+            {/* </Link> */}
             <button
               data-collapse-toggle="mobile-menu-2"
               onClick={toggleMobileMenu}
@@ -100,9 +140,8 @@ function Header() {
               </svg>
             </button>
           </div>
-
           <div
-            className={`lg:flex lg:items-center ${
+            className={`w-full lg:w-auto lg:flex lg:items-center ${
               isMobileMenuOpen ? "block" : "hidden"
             }`}
             id="mobile-menu-2"
@@ -159,13 +198,21 @@ function Header() {
                 </Link>
               </li>
               <li>
-                <Link to="/dashboard">
+                <Link
+                  to="/Contact"
+                  class="block py-2 pl-3 pr-4 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-indigo-900  lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                >
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <div className="relative">
                   <button
-                    id="dropdownNavbarLink"
-                    data-dropdown-toggle="dropdownNavbar"
-                    class="flex items-center justify-between w-full py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-indigo-900 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
+                    onClick={toggleLanguageDropdown}
+                    type="button"
+                    className="flex items-center justify-between w-full py-2 pl-3 pr-4 text-gray-900 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-indigo-900 md:p-0 md:w-auto dark:text-white md:dark:hover:text-blue-500 dark:focus:text-white dark:border-gray-700 dark:hover:bg-gray-700 md:dark:hover:bg-transparent"
                   >
-                    Language{" "}
+                    <img src={uk} className="h-5 w-5 mt-0.5" alt="language" />
                     <svg
                       class="w-2.5 h-2.5 ml-2.5"
                       aria-hidden="true"
@@ -182,33 +229,30 @@ function Header() {
                       />
                     </svg>
                   </button>
-                </Link>
-
-                <div
-                  id="dropdownNavbar"
-                  class="z-10 hidden font-normal bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600"
-                >
-                  <ul
-                    class="py-2 text-sm text-gray-700 dark:text-gray-400"
-                    aria-labelledby="dropdownLargeButton"
-                  >
-                    <li>
-                      <a
-                        href="/"
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        English
-                      </a>
-                    </li>
-                    <li>
-                      <a
-                        href="/"
-                        class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                      >
-                        Arabic
-                      </a>
-                    </li>
-                  </ul>
+                  {isLanguageOpen && (
+                    <div className="absolute right-0 left-1 mt-2 py-2 w-48 bg-white rounded-lg shadow-lg z-10">
+                      <Link to="/" className="block w-full">
+                        <button className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                          <img
+                            src={uk}
+                            className="h-5 w-5 mt-0.5 mr-2"
+                            alt="language"
+                          />
+                          <span>English</span>
+                        </button>
+                      </Link>
+                      <Link to="/" className="block w-full">
+                        <button className="flex items-center w-full px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                          <img
+                            src={ar}
+                            className="h-5 w-5 mt-0.5 mr-2"
+                            alt="language"
+                          />
+                          <span>Arabic</span>
+                        </button>
+                      </Link>
+                    </div>
+                  )}
                 </div>
               </li>
             </ul>

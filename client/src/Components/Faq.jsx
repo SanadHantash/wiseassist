@@ -1,94 +1,147 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 
-function Faq() {
+function Faq({ questions, fetchAnswer }) {
+  const [answeredQuestions, setAnsweredQuestions] = useState([]);
+
+  useEffect(() => {
+    const getAnswers = async () => {
+      const answered = await Promise.all(
+        questions.map(async (question) => {
+          try {
+            if (question.id) {
+              const answer = await fetchAnswer(question.id);
+              return { ...question, answer };
+            } else {
+              throw new Error("Question ID is missing");
+            }
+          } catch (error) {
+            console.error(`Error fetching answer for question: ${error}`);
+            return { ...question, answer: "Failed to fetch answer" };
+          }
+        })
+      );
+      setAnsweredQuestions(answered);
+    };
+
+    getAnswers();
+  }, [fetchAnswer, questions]);
+
   return (
-    <section className="dark:bg-gray-800 dark:text-gray-100">
-      <div className="container flex flex-col justify-center px-4 py-8 mx-auto md:p-8">
-        <p className="mx-auto max-w-2xl text-3xl font-bold tracking-tight text-indigo-950 dark:text-gray-200 sm:text-4xl">
-          Frequently Asked Questions
-        </p>
-        <p className="mt-4 mb-8 dark:text-gray-400"></p>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <details
-            className="border rounded-lg"
-            style={{ backgroundColor: "#F7F1EE" }}
-          >
-            <summary className="px-4 py-6 focus:outline-none focus-visible">
-              How do I update my device's software?
-            </summary>
-            <p className="px-4 py-6 pt-0 ml-4 -mt-4 dark:text-gray-400">
-              For most devices, go to the settings menu, find the "Software
-              Update" or "System Update" option, and follow the prompts to
-              update your device.
-            </p>
-          </details>
-
-          <details
-            className="border rounded-lg"
-            style={{ backgroundColor: "#F7F1EE" }}
-          >
-            <summary className="px-4 py-6 focus:outline-none focus-visible">
-              Can you help me with installing and uninstalling apps?
-            </summary>
-            <p className="px-4 py-6 pt-0 ml-4 -mt-4 dark:text-gray-400">
-              Certainly! We can guide you through the process of installing and
-              uninstalling apps on your device.
-            </p>
-          </details>
-
-          <details
-            className="border rounded-lg"
-            style={{ backgroundColor: "#F7F1EE" }}
-          >
-            <summary className="px-4 py-6 focus:outline-none focus-visible">
-              How do I connect to Wi-Fi?
-            </summary>
-            <p className="px-4 py-6 pt-0 ml-4 -mt-4 dark:text-gray-400">
-              Go to your device's settings, select "Wi-Fi," and choose the
-              network you want to connect to. Enter the password if required.
-            </p>
-          </details>
-          <details
-            className="border rounded-lg"
-            style={{ backgroundColor: "#F7F1EE" }}
-          >
-            <summary className="px-4 py-6 focus:outline-none focus-visible">
-              How do I connect to Wi-Fi?
-            </summary>
-            <p className="px-4 py-6 pt-0 ml-4 -mt-4 dark:text-gray-400">
-              Go to your device's settings, select "Wi-Fi," and choose the
-              network you want to connect to. Enter the password if required.
-            </p>
-          </details>
-          <details
-            className="border rounded-lg"
-            style={{ backgroundColor: "#F7F1EE" }}
-          >
-            <summary className="px-4 py-6 focus:outline-none focus-visible">
-              How do I connect to Wi-Fi?
-            </summary>
-            <p className="px-4 py-6 pt-0 ml-4 -mt-4 dark:text-gray-400">
-              Go to your device's settings, select "Wi-Fi," and choose the
-              network you want to connect to. Enter the password if required.
-            </p>
-          </details>
-          <details
-            className="border rounded-lg"
-            style={{ backgroundColor: "#F7F1EE" }}
-          >
-            <summary className="px-4 py-6 focus:outline-none focus-visible">
-              How do I connect to Wi-Fi?
-            </summary>
-            <p className="px-4 py-6 pt-0 ml-4 -mt-4 dark:text-gray-400">
-              Go to your device's settings, select "Wi-Fi," and choose the
-              network you want to connect to. Enter the password if required.
-            </p>
-          </details>
+    <section className="relative z-20 overflow-hidden bg-white pb-12 pt-20 dark:bg-dark lg:pb-[90px] lg:pt-[80px]">
+      <div className="container mx-auto">
+        <div className="-mx-4 flex flex-wrap">
+          <div className="w-full px-4">
+            <div className="mx-auto mb-[60px] max-w-[520px] text-center lg:mb-20">
+              <span className="mb-2 block text-lg font-semibold text-indigo-950 ">
+                FAQ
+              </span>
+              <h2 className="mb-4 text-3xl font-bold text-dark dark:text-white sm:text-[40px]/[48px]">
+                Any Questions? Look Here
+              </h2>
+              <p className="text-base text-body-color dark:text-dark-6">
+                At our tech support, we prioritize serving the elderly with
+                specialized assistance.
+              </p>
+            </div>
+          </div>
         </div>
+
+        <div className="-mx-4 flex flex-wrap justify-center ">
+          <div className="grid gap-x-24 lg:grid-cols-2 lg:w-full">
+            {answeredQuestions.map((qna, index) => (
+              <AccordionItem
+                key={index}
+                header={qna.question}
+                text={qna.answer}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute bottom-0 right-0 z-[-1]">
+        <svg
+          width="1440"
+          height="886"
+          viewBox="0 0 1440 886"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            opacity="0.5"
+            d="M193.307 -273.321L1480.87 1014.24L1121.85 1373.26C1121.85 1373.26 731.745 983.231 478.513 729.927C225.976 477.317 -165.714 85.6993 -165.714 85.6993L193.307 -273.321Z"
+            fill="url(#paint0_linear)"
+          />
+          <defs>
+            <linearGradient
+              id="paint0_linear"
+              x1="1308.65"
+              y1="1142.58"
+              x2="602.827"
+              y2="-418.681"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stop-color="#C3ACD0" stop-opacity="0.36" />
+              <stop offset="1" stop-color="#ad94bb" stop-opacity="0" />
+              <stop offset="1" stop-color="#C3ACD0" stop-opacity="0.096144" />
+            </linearGradient>
+          </defs>
+        </svg>
       </div>
     </section>
   );
 }
 
 export default Faq;
+const AccordionItem = ({ header, text }) => {
+  const [active, setActive] = useState(false);
+
+  const handleToggle = () => {
+    setActive(!active);
+  };
+
+  const answerText = typeof text === "object" ? text.answer : text;
+
+  return (
+    <div className="mb-8 w-full rounded-lg bg-white p-4 shadow-[0px_20px_95px_0px_rgba(201,203,204,0.30)] dark:bg-dark-2 dark:shadow-[0px_20px_95px_0px_rgba(0,0,0,0.30)] sm:p-8 lg:px-6 xl:px-8">
+      <button
+        className={`faq-btn flex w-full text-left`}
+        onClick={() => handleToggle()}
+      >
+        <div className="mr-5 flex h-10 w-full max-w-[40px] items-center justify-center rounded-lg bg-primary/5 text-indigo-950  dark:bg-white/5">
+          <svg
+            className={`fill-indigo-950 stroke-indigo-950 duration-200 ease-in-out ${
+              active ? "rotate-180" : ""
+            }`}
+            width="17"
+            height="10"
+            viewBox="0 0 17 10"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M7.28687 8.43257L7.28679 8.43265L7.29496 8.43985C7.62576 8.73124 8.02464 8.86001 8.41472 8.86001C8.83092 8.86001 9.22376 8.69083 9.53447 8.41713L9.53454 8.41721L9.54184 8.41052L15.7631 2.70784L15.7691 2.70231L15.7749 2.69659C16.0981 2.38028 16.1985 1.80579 15.7981 1.41393C15.4803 1.1028 14.9167 1.00854 14.5249 1.38489L8.41472 7.00806L2.29995 1.38063L2.29151 1.37286L2.28271 1.36548C1.93092 1.07036 1.38469 1.06804 1.03129 1.41393L1.01755 1.42738L1.00488 1.44184C0.69687 1.79355 0.695778 2.34549 1.0545 2.69659L1.05999 2.70196L1.06565 2.70717L7.28687 8.43257Z"
+              fill=""
+              stroke=""
+            />
+          </svg>
+        </div>
+
+        <div className="w-full">
+          <h4 className="mt-1 text-lg font-semibold text-dark dark:text-white">
+            {header}
+          </h4>
+        </div>
+      </button>
+
+      <div
+        className={`pl-[62px] duration-200 ease-in-out ${
+          active ? "block" : "hidden"
+        }`}
+      >
+        <p className="py-3 text-base leading-relaxed text-body-color dark:text-dark-6">
+          {answerText}
+        </p>
+      </div>
+    </div>
+  );
+};

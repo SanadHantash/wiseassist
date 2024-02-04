@@ -1,24 +1,100 @@
-import React from "react";
+import React, { useState } from "react";
 import logo2 from "../assets/logo2.png";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import { useAuth } from "../Context/AuthContext";
+import { useCookies } from "react-cookie";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 function Footer() {
+  const [cookies] = useCookies(["token"]);
+  const [review, setReview] = useState("");
+  const token = cookies.Token;
+  const { headers } = useAuth();
+
+  const navigate = useNavigate();
+  const addTestimonial = async (event) => {
+    event.preventDefault();
+
+    try {
+      axios.defaults.headers.common["Authorization"] = token;
+      const response = await axios.post(
+        "http://localhost:8080/createtestimonial",
+        { testimonial: review },
+        { headers }
+      );
+      console.log("Testimonial added:", response.data);
+    } catch (error) {
+      if (error.response) {
+        const status = error.response.status;
+        if (status === 409) {
+          Swal.fire({
+            icon: "error",
+            title: "Adding Testimonial Failed!",
+            text: "You can't write more than one review!",
+          });
+        } else if (status === 400) {
+          Swal.fire({
+            icon: "error",
+            title: "Please Log in to add a review :)",
+            text: "Sign up if you're new!",
+          }).then(() => {
+            navigate("/signup");
+          });
+        }
+      }
+      console.error("Error adding Testimonial:", error);
+    }
+  };
+
+  const handleInputChange = (event) => {
+    setReview(event.target.value);
+  };
+
   return (
-    <footer class=" dark:bg-gray-900" style={{ backgroundColor: "#F7F1EE " }}>
+    <footer class=" dark:bg-gray-900" style={{ backgroundColor: "#d5c5df " }}>
       <div class="mx-auto w-full max-w-screen-xl p-4 py-6 lg:py-8">
-        <div class="md:flex md:justify-between">
-          <div class="mb-6 md:mb-0 flex flex-col  ">
-            <a href="/" class="flex ">
-              <img src={logo2} class="h-18 w-48  " alt="WiseAssist Logo" />
+        <div className="md:flex md:justify-between">
+          <div className="mb-6 md:mb-0 flex flex-row items-center">
+            <a href="/" className="flex">
+              <img
+                src={logo2}
+                className="h-18 w-48 object-contain"
+                alt="WiseAssist Logo"
+              />
             </a>
-            {/* <p>Who we are?</p>
-            <p>
-              We’re a distinctive, diverse collection of people aged 40 and
-              older who are busy changing the way we age by embracing
-              opportunities to reshape our lives, connect with and help one
-              another, and change the world for the better —all while learning,
-              growing, and having fun!
-            </p> */}
+            <div className="ml-6">
+              <div className="mb-4">
+                <h2 className="text-sm font-bold text-black uppercase dark:text-white">
+                  Write a Review
+                </h2>
+                <p className="text-indigo-950 dark:text-gray-400 font-medium">
+                  Share your experience with us!
+                </p>
+              </div>
+              <form
+                onSubmit={addTestimonial}
+                className="flex flex-col sm:flex-row"
+              >
+                <label htmlFor="review" className="sr-only">
+                  Email
+                </label>
+                <div className="flex flex-col sm:flex-row">
+                  <input
+                    type="textarea"
+                    id="review"
+                    value={review}
+                    onChange={handleInputChange}
+                    placeholder="Write A Review"
+                    className="w-full sm:w-auto border border-gray-100 p-2 focus:outline-none focus:border-indigo-500 focus:ring-1 ring-indigo-500 sm:mr-2 mb-2 sm:mb-0"
+                  />
+                  <button className="w-full sm:w-auto bg-indigo-950 px-6 py-3 text-sm font-bold uppercase tracking-wide text-white transition-none hover:bg-indigo-900">
+                    Submit
+                  </button>
+                </div>
+              </form>
+            </div>
           </div>
           <div class="grid grid-cols-2 gap-8 sm:gap-6 sm:grid-cols-3">
             <div>
@@ -26,20 +102,20 @@ function Footer() {
                 Who We are?
               </h2>
               <ul class="text-indigo-950 dark:text-gray-400 font-medium">
+                <li>
+                  <Link to="/about" class="hover:text-indigo-900">
+                    About Us
+                  </Link>
+                </li>
                 <li class="mb-0">
                   <Link to="/Contact" class="hover:text-indigo-900">
                     Contact
                   </Link>
                 </li>
                 <li>
-                  <a href="/" class="hover:text-indigo-900">
-                    Our Purpose
-                  </a>
-                </li>
-                <li>
-                  <a href="/" class="hover:text-indigo-900">
-                    Our Services
-                  </a>
+                  <Link to="/faq" class="hover:text-indigo-900">
+                    Faq
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -53,7 +129,7 @@ function Footer() {
                     href="https://github.com/themesberg/flowbite"
                     class="hover:text-indigo-900"
                   >
-                    wiseassist@gmail.com
+                    wiseassist5@gmail.com
                   </a>
                 </li>
                 <li>
@@ -80,9 +156,9 @@ function Footer() {
               </h2>
               <ul class="text-indigo-950 dark:text-gray-400 font-medium">
                 <li class="mb-4">
-                  <a href="/" class="hover:text-indigo-900">
+                  <Link to="/signup" class="hover:text-indigo-900">
                     SignUp for Newsletters
-                  </a>
+                  </Link>
                 </li>
               </ul>
             </div>
@@ -150,25 +226,6 @@ function Footer() {
                 />
               </svg>
               <span class="sr-only">Twitter page</span>
-            </a>
-            <a
-              href="/"
-              class="text-indigo-950 hover:text-indigo-900 dark:hover:text-white"
-            >
-              <svg
-                class="w-4 h-4"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M10 .333A9.911 9.911 0 0 0 6.866 19.65c.5.092.678-.215.678-.477 0-.237-.01-1.017-.014-1.845-2.757.6-3.338-1.169-3.338-1.169a2.627 2.627 0 0 0-1.1-1.451c-.9-.615.07-.6.07-.6a2.084 2.084 0 0 1 1.518 1.021 2.11 2.11 0 0 0 2.884.823c.044-.503.268-.973.63-1.325-2.2-.25-4.516-1.1-4.516-4.9A3.832 3.832 0 0 1 4.7 7.068a3.56 3.56 0 0 1 .095-2.623s.832-.266 2.726 1.016a9.409 9.409 0 0 1 4.962 0c1.89-1.282 2.717-1.016 2.717-1.016.366.83.402 1.768.1 2.623a3.827 3.827 0 0 1 1.02 2.659c0 3.807-2.319 4.644-4.525 4.889a2.366 2.366 0 0 1 .673 1.834c0 1.326-.012 2.394-.012 2.72 0 .263.18.572.681.475A9.911 9.911 0 0 0 10 .333Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <span class="sr-only">GitHub account</span>
             </a>
           </div>
         </div>

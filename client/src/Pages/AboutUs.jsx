@@ -1,28 +1,19 @@
 import React, { useState, useEffect } from "react";
 import OurServices from "../Components/OurServices";
-import Header from "../Components/Header";
-import Footer from "../Components/Footer";
+
 import about from "../assets/about.jpg";
 import AOS from "aos";
 import "aos/dist/aos.css";
 
 function AboutUs() {
-  const [isSignIn, setSignin] = useState(false);
-  const [isAdmin, setAdmin] = useState(false);
   useEffect(() => {
     AOS.init();
   }, []);
   return (
     <>
-      <Header
-        setSignin={setSignin}
-        setAdmin={setAdmin}
-        isAdmin={isAdmin}
-        isSignIn={isSignIn}
-      />
       <section
-        class="flex items-center xl:h-screen font-poppins dark:bg-gray-800 "
-        style={{ backgroundColor: "#F7F1EE " }}
+        class="flex items-center mt-10 xl:h-screen font-poppins dark:bg-gray-800 "
+        style={{ backgroundColor: "#d5c5df " }}
       >
         <div class="justify-center flex-1 max-w-6xl py-4 mx-auto lg:py-6 md:px-6">
           <div class="flex flex-wrap ">
@@ -80,7 +71,7 @@ function AboutUs() {
           </div>
         </div>
       </section>
-      <OurServices /> <Footer />
+      <OurServices />
     </>
   );
 }

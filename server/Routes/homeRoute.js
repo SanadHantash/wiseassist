@@ -1,6 +1,8 @@
 const homeController = require('../Controllers/homeController');
 const express = require('express');
+const app = express();
 const router = express.Router();
-router.get('/home/allcourses', homeController.allcourses);
-router.get('/home/allworkshops', homeController.allworkshops);
+const middleware = require('../middleware/authorization');
+router.get('/home/allcourses', homeController.allelderliescourses);
+router.get('/home/allworkshops', homeController.allelderliesworkshops);
 module.exports = router;

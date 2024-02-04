@@ -1,0 +1,24 @@
+{
+"questions": [
+    "how to connect to wifi",
+    "how to secure my phone",
+    "how to download image from internet",
+    "how to create facebook account",
+    "how to take screenshot on my phone",
+    "what is backup",
+    "how to save my laptop battery",
+    "how to save my phone battery",
+    "how to download video from youtube"
+],
+"answers": [
+    "Enable Wi-Fi, select network, enter password, wait for connection, complete verification if needed – connected!",
+    "To secure your phone, use strong locks (password or biometrics), keep software updated, employ secure connections, enable remote tracking, install security apps, limit app permissions, use encrypted messaging, be cautious with links, back up data, and enable two-factor authentication. Stay informed about security best practices.",
+    "Right-click (or long-press on mobile) the image, select Save Image As (or similar), choose a location, and click Save. Respect copyright laws when downloading and using images.",
+    "To create a Facebook account, visit https://www.facebook.com/, fill in your details in the Sign Up section, verify your identity, and customize your profile. Exercise caution with privacy settings and password security.",
+    "To take a screenshot on your phone: For Android, press power + volume down.For iPhone (with home button), press home + side button; (without home button), press side + volume up.For Samsung, press power + volume down.For Huawei, press power + volume down or use the Knock feature.For Google Pixel, press power + volume down. Afterward, find the screenshot in your gallery or designated folder.",
+    "A backup is a duplicate copy of important data created to prevent loss or damage. It serves as a safeguard against accidental deletion, hardware failures, or other unforeseen events, allowing for data recovery and continuity.",
+    "To save your laptop battery, adjust power settings, lower screen brightness, close unnecessary apps, disconnect peripherals, and disable Wi-Fi/Bluetooth when not needed. Use hibernate or sleep mode, keep software updated, and replace an aging battery if necessary.",
+    "To save your phone battery, adjust screen brightness, activate power-saving mode, manage background apps, and optimize connectivity settings. Keep apps and the OS updated, use dark mode, and minimize widget and live wallpaper usage. Consider portable chargers for on-the-go and, if needed, replace the battery professionally for improved performance.",
+    "Downloading videos from YouTube without permission violates terms of service. Use legal options like YouTube Premium for offline viewing or YouTube Studio for your own videos. Respect copyright laws"
+]
+}

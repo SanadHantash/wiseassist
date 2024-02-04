@@ -2,11 +2,11 @@ const Profile = require("../Models/userprofileModel");
 const Course = require("../Models/courseModel");
 const User = require("../Models/userModel");
 const multer = require("multer");
-
+const path = require("path");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const { admin } = require("../firebase");
-
+const { log } = require("console");
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage }).single("image");
@@ -84,72 +84,49 @@ const addlesson = async (req, res) => {
   }
 };
 
-const addtowishlist = async (req, res) => {
-  try {
-    const userID = req.user.userId;
-    const courseID = req.params.id;
-    await Profile.addwish(userID, courseID);
-    res.status(200).json("Course added to witchlist successfully");
-  } catch (error) {
-    res
-      .status(400)
-      .json({ success: false, error: "Course added to witchlist failed" });
-  }
-};
 
-const witchlist = async (req, res) => {
-  try {
-    const userID = req.user.userId;
-    const witchlist = await Profile.getwitchlist(userID);
-    res.status(200).json(witchlist);
-  } catch (error) {
-    res.status(500).json(error);
-  }
-};
 
-const deletefromwitchlist = async (req, res) => {
-  try {
-    const whichID = req.params.id;
-    const userID = req.user.userId;
-    await Profile.deletefromwitchlist(userID, whichID);
-    res.status(200).json("witchlist deleted successfuly");
-  } catch (error) {
-    res.status(400).json({ success: false, error: "witchlist deleted failed" });
-  }
-};
+
 
 const regincourse = async (req, res) => {
   try {
     const courseID = req.params.id;
+    const userID = req.user.userId;
 
-    const courseDetails = await Course.detail(courseID);
-
-    if (!courseDetails || courseDetails.length === 0) {
-      throw new Error("Course not found");
+    const isEnrolled = await Profile.isenrolled(userID, courseID);
+    if (isEnrolled) {
+      throw new Error("you are already enrolled");
     }
 
+    const courseDetails = await Course.detail(courseID);
     const is_paid = courseDetails[0].is_paid;
+    let seats = courseDetails[0].seats;
+    console.log(seats);
+    if (seats === 0) {
+      throw new Error("Enrollment is not available due to the limited number of seats having expired");
+    }
 
-    if (is_paid === true) {
-      const userID = req.user.userId;
+    if (is_paid === "Paid") {
       await Profile.reginpaidcourse(userID, courseID);
-      res.status(201).json({
+      seats -= 1;
+      return res.status(201).json({
         success: true,
         message: "Paid course registered successfully",
       });
-    } else if (is_paid === false) {
-      const userID = req.user.userId;
+    } else if (is_paid === "Free") {
       await Profile.reginfreecourse(userID, courseID);
-      res.status(201).json({
+      seats -= 1;
+      return res.status(201).json({
         success: true,
         message: "Free course registered successfully",
       });
     } else {
       throw new Error("Invalid value for is_paid parameter");
     }
+
   } catch (err) {
     console.error(err);
-    res.status(400).json({
+    return res.status(400).json({
       success: false,
       error: err.message || "Course registration failed",
     });
@@ -180,18 +157,10 @@ const getregisteredworkshops = async (req, res, next) => {
   }
 };
 
-const mywatchedvideos = async (req, res) => {
-  try {
-    const userID = req.user.userId;
-    const lessons = await Profile.mywatchedvideos(userID);
-    res.status(200).json({ success: true, lessons });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, error: "Error in getting videos" });
-  }
-};
+
 
 const updateinfo = async (req, res) => {
+
   const userID = req.user.userId;
 
   const { first_name, last_name, user_name, email, phonenumber } = req.body;
@@ -264,7 +233,9 @@ const updateinfo = async (req, res) => {
 };
 
 const updatepassword = async (req, res) => {
+  
   try {
+    
     const userID = req.user.userId;
     const email = req.user.email;
     const { oldpassword, newpassword } = req.body;
@@ -309,14 +280,9 @@ const unrolled = async (req, res) => {
 module.exports = {
   userinfo,
   profilepicture,
-  addlesson,
-  witchlist,
-  addtowishlist,
-  deletefromwitchlist,
   regincourse,
   getregisteredcourses,
   getregisteredworkshops,
-  mywatchedvideos,
   updateinfo,
   updatepassword,
   unrolled,

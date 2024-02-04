@@ -1,9 +1,9 @@
 const Home = require('../Models/homeModel.js');
 
-const allcourses = async (req, res, next) => {
+const allelderliescourses = async (req, res, next) => {
 
     try {
-      const courses = await Home.allcourses();
+      const courses = await Home.allelderliescourses();
       res.status(200).json({ success: true, courses });
     } 
     
@@ -12,10 +12,10 @@ const allcourses = async (req, res, next) => {
       res.status(500).json({ success: false, error: 'Error in getting courses' });
     }
   };
-const allworkshops = async (req, res, next) => {
+const allelderliesworkshops = async (req, res, next) => {
 
     try {
-      const courses = await Home.allworkshops();
+      const courses = await Home.allelderliesworkshops();
       res.status(200).json({ success: true, courses });
     } 
     
@@ -27,6 +27,6 @@ const allworkshops = async (req, res, next) => {
 
 
   module.exports = {
-    allcourses,
-    allworkshops
+    allelderliescourses,
+    allelderliesworkshops
   }

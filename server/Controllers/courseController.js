@@ -1,9 +1,11 @@
 
 const Course = require('../Models/courseModel.js');
+//const multer  = require('multer');
+const path = require('path');
 
 
 
-const allcourses = async (req, res, next) => {
+const allelderliescourses = async (req, res, next) => {
 
     try {
       const courses = await Course.allelderliescourses();
@@ -15,7 +17,7 @@ const allcourses = async (req, res, next) => {
       res.status(500).json({ success: false, error: 'Error in getting courses' });
     }
   };
-const allworkshops = async (req, res, next) => {
+const allelderliesworkshops = async (req, res, next) => {
 
     try {
       const courses = await Course.allelderliesworkshops();
@@ -27,8 +29,8 @@ const allworkshops = async (req, res, next) => {
       res.status(500).json({ success: false, error: 'Error in getting workshops' });
     }
   };
-  
 
+  
   const detail = async (req, res) => {
     const courseId = req.params.id;
     try {
@@ -66,10 +68,10 @@ const allworkshops = async (req, res, next) => {
         const courseDetails = await Course.detail(courseID);
     
         const is_paid = courseDetails[0].is_paid; 
-        if (is_paid === true) { 
+        if (is_paid === "Paid") { 
           const lessons =  await Course.alllessonspaid(courseID);
           res.status(201).json({ success: true, lessons });
-        } else if (is_paid === false) { 
+        } else if (is_paid === "Free") { 
           const lessons =  await Course.alllessonsfree(courseID);
           res.status(201).json({ success: true, lessons });
         } else {
@@ -87,11 +89,11 @@ const allworkshops = async (req, res, next) => {
           const courseDetails = await Course.detail(courseID);
   
           const is_paid = courseDetails[0].is_paid;
-          if (is_paid === true) {
+          if (is_paid === "Paid") {
               const userID = req.user.userId
               const lessons = await Course.alllessonspaidauth(userID, courseID);
               res.status(201).json({ success: true, lessons });
-          } else if (is_paid === false) {
+          } else if (is_paid === "Free") {
               const lessons = await Course.alllessonsfree(courseID);
               res.status(201).json({ success: true, lessons });
           } else {
@@ -104,20 +106,7 @@ const allworkshops = async (req, res, next) => {
   };
   
 
-    const addratetocourse = async (req, res) => {
-      const {rate } = req.body;
-      const courseID = req.params.id;
-      const userID = req.user.userId;
-      try {
-          await Course.addratetocourse(courseID, userID, rate);
-      
-          res.status(200).json({ success: true, message: 'your rate added successfully' });
-      } catch (error) {
-          console.error(error);
-          res.status(500).json({ error: 'Internal Server Error' });
-      }
-  };
-
+   
 
   const addcommenttocourse = async (req, res) => {
     const { comment } = req.body;
@@ -147,61 +136,18 @@ const getcoursecomments = async (req, res) => {
 
 
 
-    const addratetolesson = async (req, res) => {
-      const {rate } = req.body;
-      const lessonID = req.params.id;
-      const userID = req.user.userId;
-      try {
-          await Course.addratetolesson(lessonID, userID, rate);
-      
-          res.status(200).json({ success: true, message: 'your rate added successfully' });
-      } catch (error) {
-          console.error(error);
-          res.status(500).json({ error: 'Internal Server Error' });
-      }
-  };
 
-
-  const addcommenttolesson = async (req, res) => {
-    const { comment } = req.body;
-    const lessonID = req.params.id;
-    const userID = req.user.userId;
-    console.log(userID);
-    try {
-        await Course.addcommenttolesson(lessonID, userID, comment);
-        res.status(200).json({ success: true, message: 'Your comment added successfully' });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
-};
-
-
-const getlessoncomments = async (req, res) => {
-    const lessonID = req.params.id;
-  try {
-    const comments = await Course.getlessoncomments(lessonID); 
-    res.status(200).json({ success: true, comments });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, error: 'Error in getting comments' });
-  }
-};
 
 
 
 
 module.exports = {
-    allcourses,
+    allelderliescourses,
     detail,
     lessonpage,
-    allworkshops,
-    alllesonsauth,
+    allelderliesworkshops,
     alllesons,
-    addratetocourse,
     addcommenttocourse,
     getcoursecomments,
-    addratetolesson,
-    addcommenttolesson,
-    getlessoncomments
+    alllesonsauth
   };
